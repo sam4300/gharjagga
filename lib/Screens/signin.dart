@@ -4,6 +4,7 @@ import 'package:ghaarjaggaa/Models/user_model.dart';
 import 'package:ghaarjaggaa/Screens/signup.dart';
 
 import 'Dashboard/dashboard.dart';
+import 'Dashboard/tabscreen.dart';
 
 class Signin extends StatefulWidget {
   static const routeName = '/signin-page';
@@ -16,9 +17,6 @@ class Signin extends StatefulWidget {
 
 class _SigninState extends State<Signin> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
-  // Navigator.push(
-  //     context, new MaterialPageRoute(builder: (context) => dashboard()
 
   User user = User('', '');
   bool isHiddenPassword = true;
@@ -193,7 +191,7 @@ class _SigninState extends State<Signin> {
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
                         Navigator.of(context)
-                            .pushReplacementNamed(Dashboard.routeName);
+                            .pushReplacementNamed(TabScreen.routeName);
                       } else {}
                     },
                     child: Text('Sign in')),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ghaarjaggaa/Screens/Widgets/rooms_listview.dart';
+import 'package:ghaarjaggaa/Widgets/rooms_listview.dart';
 
 class RoomsList extends StatelessWidget {
   static const routeName = ("/RoomList");

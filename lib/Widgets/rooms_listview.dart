@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:ghaarjaggaa/PropertyItem/house_item.dart';
+import 'package:ghaarjaggaa/PropertyItem/room_item.dart';
 import 'package:ghaarjaggaa/Providers/rooms_provider.dart';
 import 'package:provider/provider.dart';
 
-class HousesListView extends StatelessWidget {
-  const HousesListView({Key? key}) : super(key: key);
+class RoomsListView extends StatelessWidget {
+  const RoomsListView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +12,7 @@ class HousesListView extends StatelessWidget {
     final items = roomsData.roomsList;
     return ListView.builder(
       itemBuilder: (ctx, i) {
-        return HouseItem(
+        return RoomItem(
           title: "Room Available",
           availability: "available",
           imageUrl:

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ghaarjaggaa/Screens/Widgets/apartments_listview.dart';
+import 'package:ghaarjaggaa/Widgets/apartments_listview.dart';
 
 class ApartmentsList extends StatelessWidget {
   static const routeName = ("/apartmentsList");

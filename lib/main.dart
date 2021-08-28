@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ghaarjaggaa/Screens/Dashboard/dashboard.dart';
+import 'package:ghaarjaggaa/Screens/Dashboard/tabscreen.dart';
 import 'package:ghaarjaggaa/Screens/signup.dart';
 import 'package:provider/provider.dart';
 
@@ -38,6 +39,8 @@ class MyApp extends StatelessWidget {
           HouseDetailScreen.routeName: (ctx) => HouseDetailScreen(),
           LandDetailScreen.routeName: (ctx) => LandDetailScreen(),
           RoomDetailScreen.routeName: (ctx) => RoomDetailScreen(),
+          TabScreen.routeName: (ctx) => TabScreen(),
+
         },
       ),
     );

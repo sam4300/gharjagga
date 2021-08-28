@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ghaarjaggaa/Screens/Widgets/houses_listview.dart';
+import 'package:ghaarjaggaa/Widgets/houses_listview.dart';
 
 
 class HousesList extends StatelessWidget {
