@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ghaarjaggaa/Screens/Dashboard/dashboard.dart';
 import 'package:ghaarjaggaa/Screens/Dashboard/tabscreen.dart';
-import 'package:ghaarjaggaa/Screens/signup.dart';
+import 'package:ghaarjaggaa/Screens/welcome_screen.dart';
 import 'package:provider/provider.dart';
-
 import 'PropertiesListing/apartmentslisting.dart';
 import 'PropertiesListing/houseslisting.dart';
 import 'PropertiesListing/landslisting.dart';
@@ -29,7 +28,6 @@ class MyApp extends StatelessWidget {
         routes: {
           '/': (ctx) => Signin(),
           Signin.routeName: (ctx) => Signin(),
-          Signup.routeName: (ctx) => Signup(),
           Dashboard.routeName: (ctx) => Dashboard(),
           ApartmentsList.routeName: (ctx) => ApartmentsList(),
           LandsList.routeName: (ctx) => LandsList(),
@@ -40,7 +38,6 @@ class MyApp extends StatelessWidget {
           LandDetailScreen.routeName: (ctx) => LandDetailScreen(),
           RoomDetailScreen.routeName: (ctx) => RoomDetailScreen(),
           TabScreen.routeName: (ctx) => TabScreen(),
-
         },
       ),
     );
