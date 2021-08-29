@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class MainDrawer extends StatelessWidget {
   const MainDrawer({Key? key}) : super(key: key);
@@ -30,7 +31,8 @@ class MainDrawer extends StatelessWidget {
                           child: Icon(Icons.person)
                       ),
                     ),
-                    Text('Thapasamar48@gmail.com', style: TextStyle(color: Colors.white),),
+                    Text('Thapasamar48@gmail.com',
+                      style: TextStyle(color: Colors.white),),
                   ],
                 ),
 
@@ -40,7 +42,9 @@ class MainDrawer extends StatelessWidget {
               leading: Icon(Icons.person, color: Colors.white,),
               title: Text(
                 'My Details',
-                style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold, color: Colors.white),
+                style: TextStyle(fontSize: 19,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
               ),
               onTap: () {
                 Navigator.of(context).pushNamed('/');
@@ -51,10 +55,12 @@ class MainDrawer extends StatelessWidget {
               thickness: 1,
             ),
             ListTile(
-                leading: Icon(Icons.favorite,color: Colors.white,),
+                leading: Icon(Icons.favorite, color: Colors.white,),
                 title: Text(
                   'Your Favorites',
-                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold,color: Colors.white),
+                  style: TextStyle(fontSize: 19,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
                 ),
                 onTap: () {}),
             Divider(
@@ -62,16 +68,29 @@ class MainDrawer extends StatelessWidget {
               thickness: 1,
             ),
             ListTile(
-                leading: Icon(Icons.edit,color: Colors.white,),
+                leading: Icon(Icons.edit, color: Colors.white,),
                 title: Text(
                   'Manage Products',
-                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold,color: Colors.white),
+                  style: TextStyle(fontSize: 19,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
                 ),
                 onTap: () {}),
             Divider(
               color: Colors.black,
               thickness: 1,
             ),
+            ListTile(
+                leading: Icon(Icons.logout, color: Colors.white,),
+                title: Text(
+                  'log out',
+                  style: TextStyle(fontSize: 19,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                ),
+                onTap: () {
+                  FirebaseAuth.instance.signOut();
+                }),
           ],
         ),
       ),

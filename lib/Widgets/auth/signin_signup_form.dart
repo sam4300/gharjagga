@@ -1,17 +1,25 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'Dashboard/tabscreen.dart';
+import 'package:ghaarjaggaa/Screens/auth_screen.dart';
 
-class Signin extends StatefulWidget {
-  static const routeName = '/signin-page';
+class AuthForm extends StatefulWidget {
+  AuthForm(this.submitFn, this.isLoading);
 
-  const Signin({Key? key}) : super(key: key);
+  final bool isLoading;
+
+  final void Function(
+    String email,
+    String password,
+    String username,
+    bool isLogin,
+    BuildContext ctx,
+  ) submitFn;
 
   @override
-  _SigninState createState() => _SigninState();
+  _AuthFormState createState() => _AuthFormState();
 }
 
-class _SigninState extends State<Signin> {
+class _AuthFormState extends State<AuthForm> {
+  bool isHiddenPassword = true;
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   var _isLogin = true;
   var _userEmail = "";
@@ -23,16 +31,18 @@ class _SigninState extends State<Signin> {
     FocusScope.of(context).unfocus();
     if (isValid) {
       _formKey.currentState!.save();
-    } else {}
+      widget.submitFn(_userEmail.trim(), _userPassword.trim(), _userName.trim(),
+          _isLogin, context);
+    } else {
+      FocusScope.of(context).unfocus();
+    }
   }
-
-  bool isHiddenPassword = true;
 
   void togglePassword() {
     setState(() {
       isHiddenPassword = !isHiddenPassword;
     });
-  } //to show or disable visibility icon
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,6 +125,9 @@ class _SigninState extends State<Signin> {
                             color: Colors.blue,
                           ),
                         ),
+                        onSaved: (value) {
+                          _userName = value!;
+                        },
                       ),
                     ),
                   ),
@@ -130,13 +143,7 @@ class _SigninState extends State<Signin> {
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       onChanged: (value) {},
                       validator: (value) {
-                        if (value!.isEmpty) {
-                          return "*required";
-                        } else if (RegExp(
-                                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                            .hasMatch(value)) {
-                          return null;
-                        } else {
+                        if (value!.isEmpty || !value.contains('@')) {
                           return "Enter valid email";
                         }
                       },
@@ -252,71 +259,79 @@ class _SigninState extends State<Signin> {
                 SizedBox(
                   height: size.height * 0.04,
                 ),
-                Container(
-                  height: size.height * 0.06,
-                  width: size.width * 0.79,
-                  decoration: BoxDecoration(
-                    color: Colors.transparent,
-                  ),
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: StadiumBorder(),
-                        primary: Colors.blue[900],
-                      ),
-                      onPressed: _trySubmit,
-                      child: Text(_isLogin ? 'Signin' : 'Signup')),
-                ), //Insertion of login button
+                if (widget.isLoading) CircularProgressIndicator(),
+                if (!widget.isLoading)
+                  Container(
+                    height: size.height * 0.06,
+                    width: size.width * 0.79,
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                    ),
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: StadiumBorder(),
+                          primary: Colors.blue[900],
+                        ),
+                        onPressed: _trySubmit,
+                        child: Text(
+                          _isLogin ? 'Signin' : 'Signup',
+                          style: TextStyle(fontSize: 25),
+                        )),
+                  ), //Insertion of login button
                 SizedBox(
                   height: size.height * 0.02,
                 ),
                 //to show don't have an account
-                _isLogin
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            "Don’t have an Account ? ",
-                            style: TextStyle(color: Colors.blue),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _isLogin = !_isLogin;
-                              });
-                            },
-                            child: Text(
-                              "Sign Up",
-                              style: TextStyle(
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold,
-                              ),
+                if (!widget. isLoading)
+                  _isLogin
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              "Don’t have an Account ? ",
+                              style:
+                                  TextStyle(color: Colors.blue, fontSize: 15),
                             ),
-                          )
-                        ],
-                      )
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            "Already have an account ? ",
-                            style: TextStyle(color: Colors.blue),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _isLogin = !_isLogin;
-                              });
-                            },
-                            child: Text(
-                              "Sign in",
-                              style: TextStyle(
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold,
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _isLogin = !_isLogin;
+                                });
+                              },
+                              child: Text(
+                                "Sign Up",
+                                style: TextStyle(
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20),
                               ),
+                            )
+                          ],
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              "Already have an account ? ",
+                              style:
+                                  TextStyle(color: Colors.blue, fontSize: 15),
                             ),
-                          )
-                        ],
-                      ),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _isLogin = !_isLogin;
+                                });
+                              },
+                              child: Text(
+                                "Sign in",
+                                style: TextStyle(
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20),
+                              ),
+                            )
+                          ],
+                        ),
                 SizedBox(
                   height: size.height * 0.02,
                 ),
@@ -344,7 +359,7 @@ class _SigninState extends State<Signin> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) {
-                                return Signin();
+                                return AuthScreen();
                               }),
                             );
                           },
@@ -366,7 +381,7 @@ class _SigninState extends State<Signin> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) {
-                                return Signin();
+                                return AuthScreen();
                               }),
                             );
                           },

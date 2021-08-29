@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ghaarjaggaa/Screens/signin.dart';
+import 'package:ghaarjaggaa/Screens/auth_screen.dart';
+import 'package:ghaarjaggaa/Widgets/auth/signin_signup_form.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
@@ -52,7 +53,8 @@ class WelcomeScreen extends StatelessWidget {
                   primary: Colors.blue[900],
                 ),
                 onPressed: () {
-                  Navigator.of(context).pushReplacementNamed(Signin.routeName);
+                  Navigator.of(context)
+                      .pushReplacementNamed(AuthScreen.routeName);
                 },
                 child: Text(
                   "GetStarted",
