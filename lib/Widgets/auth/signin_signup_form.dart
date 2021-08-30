@@ -282,7 +282,7 @@ class _AuthFormState extends State<AuthForm> {
                   height: size.height * 0.02,
                 ),
                 //to show don't have an account
-                if (!widget. isLoading)
+                if (!widget.isLoading)
                   _isLogin
                       ? Row(
                           mainAxisAlignment: MainAxisAlignment.center,

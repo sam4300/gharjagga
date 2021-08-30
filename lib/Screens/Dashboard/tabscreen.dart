@@ -43,7 +43,7 @@ class _TabScreenState extends State<TabScreen> {
         currentIndex: _selectPageIndex,
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
+            icon: Icon(Icons.home),
             label: "Home",
           ),
           BottomNavigationBarItem(
