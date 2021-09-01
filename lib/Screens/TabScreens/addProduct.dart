@@ -1,12 +1,14 @@
 import 'dart:core';
 import 'dart:ui';
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ghaarjaggaa/Components/drawer.dart';
 import 'package:ghaarjaggaa/Helpers/location_helper.dart';
-import 'package:ghaarjaggaa/Widgets/add_property_widgets/facility_checkboxes.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:image_picker/image_picker.dart';
@@ -14,17 +16,15 @@ import 'package:location/location.dart';
 
 import '../map_screen.dart';
 
-class AddProduct extends StatefulWidget{
+class AddProduct extends StatefulWidget {
   static const routeName = "/addProperty";
-
-
 
   @override
   _AddProductState createState() => _AddProductState();
 }
 
 class _AddProductState extends State<AddProduct> {
-  bool _isEditing = false;
+  bool isEditing = false;
   File? _storeImage;
   String? _previewImageUrl;
   final _formKey = GlobalKey<FormState>();
@@ -52,18 +52,106 @@ class _AddProductState extends State<AddProduct> {
   var email = "";
   var phoneNumber = 0;
 
+  final facilitiesList = [
+    CheckBoxState(title: "Internet"),
+    CheckBoxState(title: "Swimming Pool"),
+    CheckBoxState(title: "Cable TV"),
+    CheckBoxState(title: "Water Supply"),
+    CheckBoxState(title: "Garbage Disposal"),
+    CheckBoxState(title: "Garden"),
+    CheckBoxState(title: "Peaceful"),
+    CheckBoxState(title: "Solar Water"),
+    CheckBoxState(title: "Electricity"),
+    CheckBoxState(title: "Well"),
+    CheckBoxState(title: "Drainage"),
+    CheckBoxState(title: "Reserve Tank"),
+    CheckBoxState(title: "Earthquake resistant"),
+  ];
+
+  Widget builderCheckBox(CheckBoxState checkBox) => ListTile(
+        leading: Checkbox(
+          activeColor: Colors.green,
+          value: checkBox.value,
+          onChanged: (value) {
+            setState(() {
+              checkBox.value = value;
+            });
+            if (!facilities.contains(checkBox.title)) {
+              facilities.add(checkBox.title);
+            } else {
+              facilities.remove(checkBox.title);
+            }
+          },
+        ),
+        title: Text(
+          checkBox.title,
+          style: TextStyle(color: Colors.white),
+        ),
+      );
+
+  void _postToDb() {
+    FirebaseFirestore.instance.collection('$propertyType').doc().set({
+      'purpose': purpose,
+      'propertyType': propertyType,
+      'propertyTitle': propertyTitle,
+      'area': propertyArea,
+      'areaUnit': areaUnit,
+      'propertyFace': propertyFace,
+      'roadAccess': roadAccess,
+      'roadType': roadType,
+      'builtYear': builtYear,
+      'noOfBedrooms': noOfBedroom,
+      'noOfBathrooms': noOfBathroom,
+      'noOfParking': noOfParking,
+      'noOfFloors': noOfFloors,
+      'noOfKitchen': kitchen,
+      'facilities': facilities,
+      'price': price,
+      'priceUnit': priceUnit,
+      'address': address,
+      'description': description,
+      'name': name,
+      'email': email,
+      'phoneNumber': phoneNumber,
+      'createdAt': Timestamp.now(),
+    });
+    //   FirebaseFirestore.instance
+    //       .collection('UserProperties')
+    //       .doc('$name:$phoneNumber')
+    //       .collection('$purpose')
+    //       .doc('$propertyType')
+    //       .set({
+    //     'purpose': purpose,
+    //     'propertyType': propertyType,
+    //     'propertyTitle': propertyTitle,
+    //     'area': propertyArea,
+    //     'areaUnit': areaUnit,
+    //     'propertyFace': propertyFace,
+    //     'roadAccess': roadAccess,
+    //     'roadType': roadType,
+    //     'builtYear': builtYear,
+    //     'noOfBedrooms': noOfBedroom,
+    //     'noOfBathrooms': noOfBathroom,
+    //     'noOfParking': noOfParking,
+    //     'noOfFloors': noOfFloors,
+    //     'noOfKitchen': kitchen,
+    //     'facilities': facilities,
+    //     'price': price,
+    //     'priceUnit': priceUnit,
+    //     'address': address,
+    //     'description': description,
+    //     'name': name,
+    //     'email': email,
+    //     'phoneNumber': phoneNumber
+    //   });
+  }
+
   void _trySubmit() {
     final isValid = _formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
     if (isValid) {
       _formKey.currentState!.save();
-      print(name);
-      print(email);
-      print(phoneNumber);
-      print(address);
-      print(purpose);
-      print(propertyType);
-      print(propertyFace);
+      _postToDb();
     }
   }
 
@@ -183,7 +271,7 @@ class _AddProductState extends State<AddProduct> {
                             onChanged: (String? newValue) {
                               setState(() {
                                 dropdownValuePurpose = newValue!;
-                                _isEditing = true;
+                                isEditing = true;
                               });
                               purpose = dropdownValuePurpose;
                             },
@@ -680,7 +768,32 @@ class _AddProductState extends State<AddProduct> {
                     "Facilities:",
                     style: TextStyle(color: Colors.green, fontSize: 20),
                   ),
-                  FacilitiesCheckBoxes(),
+                  Column(
+                    children: [
+                      Container(
+                        height: 380,
+                        width: double.infinity,
+                        child: GridView.count(
+                          shrinkWrap: true,
+                          childAspectRatio: 3.5,
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 0,
+                          children: [
+                            ...facilitiesList.map(builderCheckBox).toList(),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: 60,
+                        width: double.infinity,
+                        child: ListView.builder(
+                          itemBuilder: (context, index) =>
+                              Text(facilities[index]),
+                          itemCount: facilities.length,
+                        ),
+                      )
+                    ],
+                  ),
                   Row(
                     children: [
                       Expanded(
@@ -738,7 +851,7 @@ class _AddProductState extends State<AddProduct> {
                         },
                         items: <String>[
                           '/month',
-                          'only',
+                          '/-',
                           '/ropani',
                           '/sq.Feet',
                           '/sq.Meter',
@@ -846,7 +959,11 @@ class _AddProductState extends State<AddProduct> {
                                 child: IconButton(
                                   icon: Icon(Icons.remove, size: 50),
                                   color: Colors.red,
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    setState(() {
+                                      _storeImage = null;
+                                    });
+                                  },
                                 ))
                           ],
                         )
@@ -1064,7 +1181,7 @@ class _AddProductState extends State<AddProduct> {
                   TextFormField(
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
-                      hintText: "Enter your email",
+                      hintText: 'enter your email',
                       hintStyle: TextStyle(color: Colors.white38),
                     ),
                     style: TextStyle(color: Colors.white),
@@ -1090,7 +1207,7 @@ class _AddProductState extends State<AddProduct> {
                     ),
                     style: TextStyle(color: Colors.white),
                     validator: (value) {
-                      if (value!.isEmpty || value.length > 10) {
+                      if (value!.isEmpty || value.length != 10) {
                         return "Enter valid phone number";
                       }
                     },

@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ghaarjaggaa/Providers/dbProvider.dart';
+import 'package:provider/provider.dart';
 
 class MainDrawer extends StatelessWidget {
-  const MainDrawer({Key? key}) : super(key: key);
+  final user = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +14,8 @@ class MainDrawer extends StatelessWidget {
         color: Colors.grey[850],
         child: Column(
           children: [
-            AppBar(backgroundColor: Colors.grey[850],
+            AppBar(
+              backgroundColor: Colors.grey[850],
               title: Text('DETAILS'),
             ),
             Container(
@@ -26,65 +30,40 @@ class MainDrawer extends StatelessWidget {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: CircleAvatar(
-                          radius: 40,
-                          child: Icon(Icons.person)
-                      ),
+                      child:
+                          CircleAvatar(radius: 40, child: Icon(Icons.person)),
                     ),
-                    Text('Thapasamar48@gmail.com',
-                      style: TextStyle(color: Colors.white),),
+                    FutureBuilder<DocumentSnapshot>(
+                        future: FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(user!.uid)
+                            .get(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Text(
+                              "loading...",
+                              style: TextStyle(color: Colors.white),
+                            );
+                          }
+                          return Text(
+                            snapshot.data!['email'],
+                            style: TextStyle(color: Colors.white),
+                          );
+                        }),
                   ],
                 ),
-
               ),
             ),
             ListTile(
-              leading: Icon(Icons.person, color: Colors.white,),
-              title: Text(
-                'My Details',
-                style: TextStyle(fontSize: 19,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
-              ),
-              onTap: () {
-                Navigator.of(context).pushNamed('/');
-              },
-            ),
-            Divider(
-              color: Colors.black,
-              thickness: 1,
-            ),
-            ListTile(
-                leading: Icon(Icons.favorite, color: Colors.white,),
-                title: Text(
-                  'Your Favorites',
-                  style: TextStyle(fontSize: 19,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
+                leading: Icon(
+                  Icons.logout,
+                  color: Colors.white,
                 ),
-                onTap: () {}),
-            Divider(
-              color: Colors.black,
-              thickness: 1,
-            ),
-            ListTile(
-                leading: Icon(Icons.edit, color: Colors.white,),
-                title: Text(
-                  'Manage Products',
-                  style: TextStyle(fontSize: 19,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
-                ),
-                onTap: () {}),
-            Divider(
-              color: Colors.black,
-              thickness: 1,
-            ),
-            ListTile(
-                leading: Icon(Icons.logout, color: Colors.white,),
                 title: Text(
                   'log out',
-                  style: TextStyle(fontSize: 19,
+                  style: TextStyle(
+                      fontSize: 19,
                       fontWeight: FontWeight.bold,
                       color: Colors.white),
                 ),

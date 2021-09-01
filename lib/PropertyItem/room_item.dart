@@ -4,18 +4,59 @@ import 'package:ghaarjaggaa/Screens/Property_Detail_Screens/room_details.dart';
 
 class RoomItem extends StatelessWidget {
   static const routeName = ("/ApartmentItems");
-  final String title;
-  final String location;
-  final String imageUrl;
+  final String image;
+  final String purpose;
+  final String propertyType;
+  final String propertyTitle;
+  final double propertyArea;
+  final String areaUnit;
+  final String propertyFace;
+  final double roadAccess;
+  final String roadType;
+  final int builtYear;
+  final int noOfBedroom;
+  final int noOfBathroom;
+  final int noOfParking;
+  final int noOfFloors;
+  final int kitchen;
+  final List<String> facilities;
   final double price;
   final String availability;
+  final String priceUnit;
+  final String address;
+  final String description;
+  final String name;
+  final String email;
+  final String id;
+  final int phoneNumber;
 
-  RoomItem(
-      {required this.title,
-      required this.location,
-      required this.imageUrl,
-      required this.price,
-      required this.availability});
+  RoomItem({
+    required this.propertyTitle,
+    required this.image,
+    required this.price,
+    required this.availability,
+    required this.id,
+    required this.purpose,
+    required this.propertyType,
+    required this.propertyArea,
+    required this.areaUnit,
+    required this.propertyFace,
+    required this.roadType,
+    required this.priceUnit,
+    required this.description,
+    required this.name,
+    required this.email,
+    required this.phoneNumber,
+    required this.roadAccess,
+    required this.builtYear,
+    required this.noOfBedroom,
+    required this.noOfBathroom,
+    required this.noOfParking,
+    required this.noOfFloors,
+    required this.kitchen,
+    required this.facilities,
+    required this.address,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +66,34 @@ class RoomItem extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8),
       child: InkWell(
         onTap: () {
-          Navigator.of(context).pushNamed(RoomDetailScreen.routeName);
+          Navigator.of(context)
+              .pushNamed(RoomDetailScreen.routeName, arguments: {
+            'propertyTitle': propertyTitle,
+            'image': image,
+            'price': price,
+            'availability': availability,
+            'id': id,
+            'roadAccess': roadAccess,
+            'propertyType': propertyType,
+            'noOfFloors': noOfFloors,
+            'kitchen': kitchen,
+            'facilities': facilities,
+            'phoneNumber': phoneNumber,
+            'name': name,
+            'noOfParking': noOfParking,
+            'noOfBathroom': noOfBedroom,
+            'description': description,
+            'areaUnit': areaUnit,
+            'purpose': purpose,
+            'email': email,
+            'address': address,
+            'builtYear': builtYear,
+            'propertyFace': propertyFace,
+            'priceUnit': priceUnit,
+            'noOfBedroom': noOfBedroom,
+            'propertyArea': propertyArea,
+            'roadType': roadType
+          });
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -55,14 +123,14 @@ class RoomItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        title,
+                        propertyTitle,
                         style: TextStyle(
                             fontSize: 23,
                             fontWeight: FontWeight.bold,
                             color: Colors.white70),
                         maxLines: 2,
                       ),
-                      Text(location,
+                      Text(address,
                           style: TextStyle(
                               color: Colors.white70,
                               fontSize: 13,
@@ -80,7 +148,7 @@ class RoomItem extends StatelessWidget {
                                 color: Colors.white70,
                               ),
                               Text(
-                                "2",
+                                "$noOfBedroom",
                                 style: TextStyle(
                                     color: Colors.white70,
                                     fontWeight: FontWeight.bold),
@@ -93,25 +161,31 @@ class RoomItem extends StatelessWidget {
                                 Icons.bathtub_outlined,
                                 color: Colors.white70,
                               ),
-                              Text("2",
+                              Text("$noOfBathroom",
                                   style: TextStyle(
                                       color: Colors.white70,
                                       fontWeight: FontWeight.bold)),
                             ],
                           ),
-                          Text("230 m²",
-                              style: TextStyle(color: Colors.white70))
+                          Column(
+                            children: [
+                              Text("$propertyArea",
+                                  style: TextStyle(color: Colors.white70)),
+                              Text("$areaUnit",
+                                  style: TextStyle(color: Colors.white70)),
+                            ],
+                          )
                         ],
                       ),
                       SizedBox(
                         height: 5,
                       ),
                       Text(
-                        " Rs $price/mth",
+                        " Rs:$price$priceUnit",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.blue,
-                            fontSize: 20),
+                            fontSize: 15),
                       ),
                       SizedBox(
                         height: 5,
@@ -134,7 +208,7 @@ class RoomItem extends StatelessWidget {
                                 color: Colors.green,
                               ),
                               Text(
-                                availability,
+                                "available",
                                 style: TextStyle(color: Colors.green),
                               ),
                             ],

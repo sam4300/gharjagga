@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ghaarjaggaa/PropertyItem/land_item.dart';
 import 'package:ghaarjaggaa/Providers/rooms_provider.dart';
@@ -8,20 +9,45 @@ class LandsListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final roomsData = Provider.of<Rooms>(context);
-    final items = roomsData.roomsList;
-    return ListView.builder(
-      itemBuilder: (ctx, i) {
-        return LandItem(
-          title: "Land Available",
-          availability: "available",
-          imageUrl:
-          "https://scontent.fktm8-1.fna.fbcdn.net/v/t39.30808-6/239861959_1585425988455763_605470524180909019_n.jpg?_nc_cat=106&ccb=1-5&_nc_sid=e3f864&_nc_ohc=479olnsIrrgAX8PP7Wz&tn=iZvOj0a6_xA1qHef&_nc_ht=scontent.fktm8-1.fna&oh=20f56307153fa226665b3288ec288b3e&oe=61221344",
-          location: "Lalitpur, Nepal",
-          price: 2000,
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('Land').snapshots(),
+      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (!snapshot.hasData) {
+          return Center(child: const CircularProgressIndicator());
+        }
+        return ListView.builder(
+          itemCount: snapshot.data!.docs.length,
+          itemBuilder: (context, index) {
+            return LandItem(
+              propertyTitle: snapshot.data!.docs[index]['propertyTitle'],
+              image: snapshot.data!.docs[index]['propertyTitle'],
+              price: snapshot.data!.docs[index]['price'],
+              availability: snapshot.data!.docs[index]['propertyTitle'],
+              id: snapshot.data!.docs[index].id,
+              roadAccess: snapshot.data!.docs[index]['roadAccess'],
+              propertyType: snapshot.data!.docs[index]['propertyType'],
+              noOfFloors: snapshot.data!.docs[index]['noOfFloors'],
+              kitchen: snapshot.data!.docs[index]['noOfKitchen'],
+              facilities: [],
+              phoneNumber: snapshot.data!.docs[index]['phoneNumber'],
+              name: snapshot.data!.docs[index]['name'],
+              noOfParking: snapshot.data!.docs[index]['noOfParking'],
+              noOfBathroom: snapshot.data!.docs[index]['noOfBathrooms'],
+              description: snapshot.data!.docs[index]['description'],
+              areaUnit: snapshot.data!.docs[index]['areaUnit'],
+              purpose: snapshot.data!.docs[index]['purpose'],
+              email: snapshot.data!.docs[index]['email'],
+              address: snapshot.data!.docs[index]['address'],
+              builtYear: snapshot.data!.docs[index]['builtYear'],
+              propertyFace: snapshot.data!.docs[index]['propertyFace'],
+              priceUnit: snapshot.data!.docs[index]['priceUnit'],
+              noOfBedroom: snapshot.data!.docs[index]['noOfBedrooms'],
+              propertyArea: snapshot.data!.docs[index]['area'],
+              roadType: snapshot.data!.docs[index]['roadType'],
+            );
+          },
         );
       },
-      itemCount: items.length,
     );
   }
 }
