@@ -105,8 +105,8 @@ class MyPropertyItem extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ClipRRect(
-                    child: Image.asset(
-                      "assets/images/apartment.jpg",
+                    child: Image.network(
+                      image,
                       fit: BoxFit.cover,
                     ),
                     borderRadius: BorderRadius.circular(30),

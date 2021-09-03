@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ghaarjaggaa/Screens/Property_Detail_Screens/land_details.dart';
+import 'package:ghaarjaggaa/Screens/Property_Detail_Screens/apartment_details.dart';
 
 class LandItem extends StatelessWidget {
   static const routeName = ("/ApartmentItems");
@@ -67,7 +67,7 @@ class LandItem extends StatelessWidget {
       child: InkWell(
         onTap: () {
           Navigator.of(context)
-              .pushNamed(LandDetailScreen.routeName, arguments: {
+              .pushNamed(ApartmentDetailScreen.routeName, arguments: {
             'propertyTitle': propertyTitle,
             'image': image,
             'price': price,
@@ -104,8 +104,8 @@ class LandItem extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ClipRRect(
-                  child: Image.asset(
-                    "assets/images/apartment.jpg",
+                  child: Image.network(
+                    image,
                     fit: BoxFit.cover,
                   ),
                   borderRadius: BorderRadius.circular(30),

@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ghaarjaggaa/Screens/Property_Detail_Screens/favorite_details.dart';
 import 'package:readmore/readmore.dart';
 
 class ApartmentDetailScreen extends StatefulWidget {
@@ -18,34 +17,99 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailScreen> {
   final String uId = FirebaseAuth.instance.currentUser!.uid;
   var _isFavorite = false;
 
+  void _addToFavorite(
+    String imageUrl,
+    String purpose,
+    String propertyType,
+    String propertyTitle,
+    double propertyArea,
+    String areaUnit,
+    String propertyFace,
+    double roadAccess,
+    String roadType,
+    int builtYear,
+    int noOfBedroom,
+    int noOfBathroom,
+    int noOfParking,
+    int noOfFloors,
+    int kitchen,
+    List<String> facilities,
+    double price,
+    String availability,
+    String priceUnit,
+    String address,
+    String description,
+    String name,
+    String email,
+    String docId,
+    int phoneNumber,
+    BuildContext context,
+  ) async {
+    setState(() {
+      _isFavorite = !_isFavorite;
+    });
+    await FirebaseFirestore.instance
+        .collection('favorites')
+        .doc(uId)
+        .collection('myFavorites')
+        .doc(docId)
+        .set({
+      'purpose': purpose,
+      'propertyType': propertyType,
+      'propertyTitle': propertyTitle,
+      'area': propertyArea,
+      'areaUnit': areaUnit,
+      'propertyFace': propertyFace,
+      'roadAccess': roadAccess,
+      'roadType': roadType,
+      'builtYear': builtYear,
+      'noOfBedrooms': noOfBedroom,
+      'noOfBathrooms': noOfBathroom,
+      'noOfParking': noOfParking,
+      'noOfFloors': noOfFloors,
+      'noOfKitchen': kitchen,
+      'facilities': facilities,
+      'price': price,
+      'priceUnit': priceUnit,
+      'address': address,
+      'description': description,
+      'name': name,
+      'email': email,
+      'phoneNumber': phoneNumber,
+      'isFavorite': _isFavorite,
+      'userID': FirebaseAuth.instance.currentUser!.uid,
+      'imageUrl': imageUrl,
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final routeArgs =
         ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
-    final propertyTitle = routeArgs['propertyTitle'];
-    final image = routeArgs['image'];
+    final propertyTitle = routeArgs['propertyTitle'].toString();
+    final image = routeArgs['image'].toString();
     final price = routeArgs['price'];
-    final availability = routeArgs['availability'];
+    final availability = routeArgs['availability'].toString();
     final docId = routeArgs['id'].toString();
     final roadAccess = routeArgs['roadAccess'];
-    final propertyType = routeArgs['propertyType'];
+    final propertyType = routeArgs['propertyType'].toString();
     final noOfFloors = routeArgs['noOfFloors'];
     final kitchen = routeArgs['kitchen'];
-    final facilities = routeArgs['facilities'];
+    final List<String> facilities = routeArgs['facilities'] as List<String>;
     final phoneNumber = routeArgs['phoneNumber'];
-    final name = routeArgs['name'];
+    final name = routeArgs['name'].toString();
     final noOfParking = routeArgs['noOfParking'];
     final noOfBedroom = routeArgs['noOfBedroom'];
-    final description = routeArgs['description'];
-    final areaUnit = routeArgs['areaUnit'];
-    final purpose = routeArgs['purpose'];
-    final email = routeArgs['email'];
-    final address = routeArgs['address'];
+    final description = routeArgs['description'].toString();
+    final areaUnit = routeArgs['areaUnit'].toString();
+    final purpose = routeArgs['purpose'].toString();
+    final email = routeArgs['email'].toString();
+    final address = routeArgs['address'].toString();
     final builtYear = routeArgs['builtYear'];
-    final propertyFace = routeArgs['propertyFace'];
-    final priceUnit = routeArgs['priceUnit'];
+    final propertyFace = routeArgs['propertyFace'].toString();
+    final priceUnit = routeArgs['priceUnit'].toString();
     final propertyArea = routeArgs['propertyArea'];
-    final roadType = routeArgs['roadType'];
+    final roadType = routeArgs['roadType'].toString();
     final noOfBathroom = routeArgs['noOfBathroom'];
 
     return Scaffold(
@@ -69,8 +133,8 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailScreen> {
                       child: Container(
                         height: 250,
                         width: double.infinity,
-                        child: Image.asset(
-                          "assets/images/apartment.jpg",
+                        child: Image.network(
+                          image,
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -78,25 +142,65 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailScreen> {
                     Positioned(
                       child: FutureBuilder<DocumentSnapshot>(
                           future: FirebaseFirestore.instance
-                              .collection('properties')
+                              .collection('favorites')
+                              .doc(uId)
+                              .collection('myFavorites')
                               .doc(docId)
                               .get(),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return Text('');
+                                    ConnectionState.waiting ||
+                                !snapshot.data!.exists) {
+                              return IconButton(
+                                onPressed: () {
+                                  _addToFavorite(
+                                    image,
+                                    purpose,
+                                    propertyType.toString(),
+                                    propertyTitle.toString(),
+                                    double.parse('$propertyArea'),
+                                    areaUnit.toString(),
+                                    propertyFace.toString(),
+                                    double.parse('$roadAccess'),
+                                    roadType.toString(),
+                                    int.parse('$builtYear'),
+                                    int.parse('$noOfBedroom'),
+                                    int.parse('$noOfBathroom'),
+                                    int.parse('$noOfParking'),
+                                    int.parse('$noOfFloors'),
+                                    int.parse('$kitchen'),
+                                    facilities,
+                                    double.parse('$price'),
+                                    availability,
+                                    priceUnit,
+                                    address,
+                                    description,
+                                    name,
+                                    email,
+                                    docId,
+                                    int.parse('$phoneNumber'),
+                                    context,
+                                  );
+                                },
+                                icon: Icon(
+                                  Icons.favorite_border,
+                                  size: 60,
+                                  color: Colors.white,
+                                ),
+                              );
                             }
                             return IconButton(
                               onPressed: () {
+                                FirebaseFirestore.instance
+                                    .collection('favorites')
+                                    .doc(uId)
+                                    .collection('myFavorites')
+                                    .doc(docId)
+                                    .update({'isFavorite': _isFavorite});
+
                                 setState(() {
                                   _isFavorite = !_isFavorite;
                                 });
-                                FirebaseFirestore.instance
-                                    .collection('favorites')
-                                    .doc(FirebaseAuth.instance.currentUser!.uid)
-                                    .collection('myFavorites')
-                                    .doc('OcEhQx1ovcvSISMdsI1m')
-                                    .update({'isFavorite': _isFavorite});
                               },
                               icon: snapshot.data!['isFavorite']
                                   ? Icon(

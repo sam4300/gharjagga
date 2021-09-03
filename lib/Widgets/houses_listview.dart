@@ -23,7 +23,7 @@ class HousesListView extends StatelessWidget {
           itemBuilder: (context, index) {
             return HouseItem(
               propertyTitle: snapshot.data!.docs[index]['propertyTitle'],
-              image: snapshot.data!.docs[index]['propertyTitle'],
+              image: snapshot.data!.docs[index]['imageUrl'],
               price: snapshot.data!.docs[index]['price'],
               availability: snapshot.data!.docs[index]['propertyTitle'],
               id: snapshot.data!.docs[index].id,

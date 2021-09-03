@@ -4,7 +4,6 @@ import 'package:ghaarjaggaa/Screens/Property_Detail_Screens/apartment_details.da
 import 'package:ghaarjaggaa/Screens/Property_Detail_Screens/my_property_detail_screen.dart';
 
 class ApartmentItem extends StatelessWidget {
-
   final String image;
   final String purpose;
   final String propertyType;
@@ -105,8 +104,8 @@ class ApartmentItem extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ClipRRect(
-                    child: Image.asset(
-                      "assets/images/apartment.jpg",
+                    child: Image.network(
+                      image,
                       fit: BoxFit.cover,
                     ),
                     borderRadius: BorderRadius.circular(30),

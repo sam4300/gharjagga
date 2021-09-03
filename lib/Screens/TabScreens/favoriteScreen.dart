@@ -17,7 +17,7 @@ class Favorites extends StatelessWidget {
         backgroundColor: Colors.grey[700],
         title: Text("My Favorites"),
       ),
-      body: Container(),
+      body: FavoriteLists(),
     );
   }
 }

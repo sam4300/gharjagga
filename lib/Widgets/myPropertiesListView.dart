@@ -33,7 +33,7 @@ class _MyPropertyListViewState extends State<MyPropertyListView> {
           itemBuilder: (context, index) {
             return MyPropertyItem(
               propertyTitle: snapshot.data!.docs[index]['propertyTitle'],
-              image: snapshot.data!.docs[index]['propertyTitle'],
+              image: snapshot.data!.docs[index]['imageUrl'],
               price: snapshot.data!.docs[index]['price'],
               availability: snapshot.data!.docs[index]['propertyTitle'],
               docId: snapshot.data!.docs[index].id,
