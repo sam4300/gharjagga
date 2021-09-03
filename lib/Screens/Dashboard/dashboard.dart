@@ -195,6 +195,18 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ],
                 ),
+                SizedBox(height: 10,),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'Recommended Properties',
+                    style: TextStyle(
+                        fontSize: 19,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+
               ],
             ),
           )),

@@ -11,7 +11,10 @@ class _ApartmentsListViewState extends State<ApartmentsListView> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('Apartment').snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('properties')
+          .where('propertyType', isEqualTo: 'Apartment')
+          .snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) {
           return Center(child: const CircularProgressIndicator());
@@ -24,7 +27,7 @@ class _ApartmentsListViewState extends State<ApartmentsListView> {
               image: snapshot.data!.docs[index]['propertyTitle'],
               price: snapshot.data!.docs[index]['price'],
               availability: snapshot.data!.docs[index]['propertyTitle'],
-              id: snapshot.data!.docs[index].id,
+              docId: snapshot.data!.docs[index].id,
               roadAccess: snapshot.data!.docs[index]['roadAccess'],
               propertyType: snapshot.data!.docs[index]['propertyType'],
               noOfFloors: snapshot.data!.docs[index]['noOfFloors'],

@@ -49,6 +49,7 @@ class _AuthScreenState extends State<AuthScreen> {
             .set({
           'username': username,
           'email': email,
+          'isFavorite':false,
         });
         setState(() {
           _isLoading = false;

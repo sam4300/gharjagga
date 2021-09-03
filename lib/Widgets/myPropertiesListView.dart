@@ -1,18 +1,28 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:ghaarjaggaa/PropertyItem/house_item.dart';
-import 'package:ghaarjaggaa/Providers/rooms_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:ghaarjaggaa/PropertyItem/apartment_item.dart';
+import 'package:ghaarjaggaa/PropertyItem/my_property_item.dart';
+import 'package:ghaarjaggaa/Providers/dbProvider.dart';
 
-class HousesListView extends StatelessWidget {
-  const HousesListView({Key? key}) : super(key: key);
+class MyPropertyListView extends StatefulWidget {
+  @override
+  _MyPropertyListViewState createState() => _MyPropertyListViewState();
+}
+
+@override
+class _MyPropertyListViewState extends State<MyPropertyListView> {
+  String? get email {
+    final user = FirebaseAuth.instance.currentUser;
+    return user!.email;
+  }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('properties')
-          .where('propertyType', isEqualTo: 'House')
+          .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
           .snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) {
@@ -21,12 +31,12 @@ class HousesListView extends StatelessWidget {
         return ListView.builder(
           itemCount: snapshot.data!.docs.length,
           itemBuilder: (context, index) {
-            return HouseItem(
+            return MyPropertyItem(
               propertyTitle: snapshot.data!.docs[index]['propertyTitle'],
               image: snapshot.data!.docs[index]['propertyTitle'],
               price: snapshot.data!.docs[index]['price'],
               availability: snapshot.data!.docs[index]['propertyTitle'],
-              id: snapshot.data!.docs[index].id,
+              docId: snapshot.data!.docs[index].id,
               roadAccess: snapshot.data!.docs[index]['roadAccess'],
               propertyType: snapshot.data!.docs[index]['propertyType'],
               noOfFloors: snapshot.data!.docs[index]['noOfFloors'],
@@ -54,3 +64,14 @@ class HousesListView extends StatelessWidget {
     );
   }
 }
+//
+// ListView(
+// children: snapshot.data!.docs.map((document) {
+// return ApartmentItem(
+// title: document['propertyTitle'],
+// location: document['address'],
+// imageUrl: document['name'],
+// price: document['price'],
+// availability: document['name']);
+// }).toList(),
+// );

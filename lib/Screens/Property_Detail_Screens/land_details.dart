@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:readmore/readmore.dart';
 
@@ -12,6 +13,21 @@ class LandDetailScreen extends StatefulWidget {
 }
 
 class _LandDetailScreenState extends State<LandDetailScreen> {
+  final String uId = FirebaseAuth.instance.currentUser!.uid;
+
+  var _isFavorite = false;
+
+  void _postFavorites() {
+    setState(() {
+      _isFavorite = !_isFavorite;
+    });
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(uId)
+        .update({'isFavorite': _isFavorite});
+    // .doc(uId).collection().doc()
+    // .set({'isFavorite': _isFavorite});
+  }
   @override
   Widget build(BuildContext context) {
     final routeArgs =
@@ -56,17 +72,48 @@ class _LandDetailScreenState extends State<LandDetailScreen> {
             builder: (context, snapshot) {
               return Column(
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(30),
-                    child: Container(
-                      height: 250,
-                      width: double.infinity,
-                      child: Image.asset(
-                        "assets/images/apartment.jpg",
-                        fit: BoxFit.cover,
+                  Stack(children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(30),
+                      child: Container(
+                        height: 250,
+                        width: double.infinity,
+                        child: Image.asset(
+                          "assets/images/apartment.jpg",
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
-                  ),
+                    Positioned(
+                      child: FutureBuilder<DocumentSnapshot>(
+                          future: FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(uId)
+                              .get(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Text('');
+                            }
+                            return IconButton(
+                              onPressed: _postFavorites,
+                              icon: snapshot.data!['isFavorite']
+                                  ? Icon(
+                                Icons.favorite,
+                                size: 60,
+                                color: Colors.red,
+                              )
+                                  : Icon(
+                                Icons.favorite_border,
+                                size: 60,
+                                color: Colors.white,
+                              ),
+                            );
+                          }),
+                      bottom: 34,
+                      right: 30,
+                    ),
+                  ]),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ClipRRect(

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:readmore/readmore.dart';
 
@@ -12,10 +13,26 @@ class HouseDetailScreen extends StatefulWidget {
 }
 
 class _HouseDetailScreenState extends State<HouseDetailScreen> {
+  final String uId = FirebaseAuth.instance.currentUser!.uid;
+
+  var _isFavorite = false;
+
+  void _postFavorites() {
+    setState(() {
+      _isFavorite = !_isFavorite;
+    });
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(uId)
+        .update({'isFavorite': _isFavorite});
+    // .doc(uId).collection().doc()
+    // .set({'isFavorite': _isFavorite});
+  }
+
   @override
   Widget build(BuildContext context) {
     final routeArgs =
-    ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
+        ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     final propertyTitle = routeArgs['propertyTitle'];
     final image = routeArgs['image'];
     final price = routeArgs['price'];
@@ -52,7 +69,7 @@ class _HouseDetailScreenState extends State<HouseDetailScreen> {
           padding: const EdgeInsets.all(8.0),
           child: StreamBuilder<QuerySnapshot>(
             stream:
-            FirebaseFirestore.instance.collection('Apartment').snapshots(),
+                FirebaseFirestore.instance.collection('Apartment').snapshots(),
             builder: (context, snapshot) {
               return Column(
                 children: [
@@ -67,6 +84,48 @@ class _HouseDetailScreenState extends State<HouseDetailScreen> {
                       ),
                     ),
                   ),
+                  Stack(children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(30),
+                      child: Container(
+                        height: 250,
+                        width: double.infinity,
+                        child: Image.asset(
+                          "assets/images/apartment.jpg",
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      child: FutureBuilder<DocumentSnapshot>(
+                          future: FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(uId)
+                              .get(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Text('');
+                            }
+                            return IconButton(
+                              onPressed: _postFavorites,
+                              icon: snapshot.data!['isFavorite']
+                                  ? Icon(
+                                      Icons.favorite,
+                                      size: 60,
+                                      color: Colors.red,
+                                    )
+                                  : Icon(
+                                      Icons.favorite_border,
+                                      size: 60,
+                                      color: Colors.white,
+                                    ),
+                            );
+                          }),
+                      bottom: 34,
+                      right: 30,
+                    ),
+                  ]),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ClipRRect(
@@ -119,7 +178,7 @@ class _HouseDetailScreenState extends State<HouseDetailScreen> {
                               ),
                               Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     "Rs: $price$priceUnit",
@@ -203,7 +262,7 @@ class _HouseDetailScreenState extends State<HouseDetailScreen> {
                       child: Container(
                         decoration: BoxDecoration(
                             border:
-                            Border.all(color: Colors.white12, width: 2)),
+                                Border.all(color: Colors.white12, width: 2)),
                         height: 320,
                         width: double.infinity,
                         child: Padding(
@@ -223,7 +282,7 @@ class _HouseDetailScreenState extends State<HouseDetailScreen> {
                               ),
                               Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                     children: [
@@ -277,7 +336,7 @@ class _HouseDetailScreenState extends State<HouseDetailScreen> {
                               ),
                               Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                     children: [
@@ -350,11 +409,11 @@ class _HouseDetailScreenState extends State<HouseDetailScreen> {
                               Divider(color: Colors.white54),
                               Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         "Property Face",
@@ -375,7 +434,7 @@ class _HouseDetailScreenState extends State<HouseDetailScreen> {
                                   ),
                                   Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         "Built Year",
@@ -396,7 +455,7 @@ class _HouseDetailScreenState extends State<HouseDetailScreen> {
                                   ),
                                   Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         "Area Covered",
@@ -409,7 +468,7 @@ class _HouseDetailScreenState extends State<HouseDetailScreen> {
                                       ),
                                       Column(
                                         crossAxisAlignment:
-                                        CrossAxisAlignment.end,
+                                            CrossAxisAlignment.end,
                                         children: [
                                           Text(
                                             "$propertyArea",
@@ -434,11 +493,11 @@ class _HouseDetailScreenState extends State<HouseDetailScreen> {
                               ),
                               Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         "Access Road",
@@ -459,7 +518,7 @@ class _HouseDetailScreenState extends State<HouseDetailScreen> {
                                   ),
                                   Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         "Road Type",
@@ -480,7 +539,7 @@ class _HouseDetailScreenState extends State<HouseDetailScreen> {
                                   ),
                                   Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         "Carpet Area",
@@ -514,7 +573,7 @@ class _HouseDetailScreenState extends State<HouseDetailScreen> {
                       child: Container(
                         decoration: BoxDecoration(
                             border:
-                            Border.all(color: Colors.white12, width: 2)),
+                                Border.all(color: Colors.white12, width: 2)),
                         height: 200,
                         width: double.infinity,
                         child: Padding(

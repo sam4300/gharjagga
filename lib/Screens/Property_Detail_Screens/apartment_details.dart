@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ghaarjaggaa/Screens/Property_Detail_Screens/favorite_details.dart';
 import 'package:readmore/readmore.dart';
 
 class ApartmentDetailScreen extends StatefulWidget {
@@ -13,6 +15,9 @@ class ApartmentDetailScreen extends StatefulWidget {
 }
 
 class _ApartmentDetailsScreenState extends State<ApartmentDetailScreen> {
+  final String uId = FirebaseAuth.instance.currentUser!.uid;
+  var _isFavorite = false;
+
   @override
   Widget build(BuildContext context) {
     final routeArgs =
@@ -21,7 +26,7 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailScreen> {
     final image = routeArgs['image'];
     final price = routeArgs['price'];
     final availability = routeArgs['availability'];
-    final id = routeArgs['id'];
+    final docId = routeArgs['id'].toString();
     final roadAccess = routeArgs['roadAccess'];
     final propertyType = routeArgs['propertyType'];
     final noOfFloors = routeArgs['noOfFloors'];
@@ -47,7 +52,7 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailScreen> {
       backgroundColor: Colors.grey[850],
       appBar: AppBar(
         backgroundColor: Colors.grey[700],
-        title: Text("Apartment"),
+        title: Text("$propertyTitle"),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -58,17 +63,58 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailScreen> {
             builder: (context, snapshot) {
               return Column(
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(30),
-                    child: Container(
-                      height: 250,
-                      width: double.infinity,
-                      child: Image.asset(
-                        "assets/images/apartment.jpg",
-                        fit: BoxFit.cover,
+                  Stack(children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(30),
+                      child: Container(
+                        height: 250,
+                        width: double.infinity,
+                        child: Image.asset(
+                          "assets/images/apartment.jpg",
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
-                  ),
+                    Positioned(
+                      child: FutureBuilder<DocumentSnapshot>(
+                          future: FirebaseFirestore.instance
+                              .collection('properties')
+                              .doc(docId)
+                              .get(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Text('');
+                            }
+                            return IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  _isFavorite = !_isFavorite;
+                                });
+                                FirebaseFirestore.instance
+                                    .collection('favorites')
+                                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                                    .collection('myFavorites')
+                                    .doc('OcEhQx1ovcvSISMdsI1m')
+                                    .update({'isFavorite': _isFavorite});
+                              },
+                              icon: snapshot.data!['isFavorite']
+                                  ? Icon(
+                                      Icons.favorite,
+                                      size: 60,
+                                      color: Colors.red,
+                                    )
+                                  : Icon(
+                                      Icons.favorite_border,
+                                      size: 60,
+                                      color: Colors.white,
+                                    ),
+                            );
+                          }),
+                      bottom: 34,
+                      right: 30,
+                    ),
+                  ]),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ClipRRect(
@@ -77,7 +123,7 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailScreen> {
                         decoration: BoxDecoration(
                           border: Border.all(color: Colors.white12, width: 2),
                         ),
-                        height: 200,
+                        height: 230,
                         width: double.infinity,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),

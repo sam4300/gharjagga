@@ -7,11 +7,14 @@ import 'package:provider/provider.dart';
 import 'PropertiesListing/apartmentslisting.dart';
 import 'PropertiesListing/houseslisting.dart';
 import 'PropertiesListing/landslisting.dart';
+import 'PropertiesListing/myPropertyListing.dart';
 import 'PropertiesListing/roomslisting.dart';
 import 'Providers/rooms_provider.dart';
 import 'Screens/Property_Detail_Screens/apartment_details.dart';
+import 'Screens/Property_Detail_Screens/favorite_details.dart';
 import 'Screens/Property_Detail_Screens/house_details.dart';
 import 'Screens/Property_Detail_Screens/land_details.dart';
+import 'Screens/Property_Detail_Screens/my_property_detail_screen.dart';
 import 'Screens/Property_Detail_Screens/room_details.dart';
 import 'Screens/auth_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -52,6 +55,9 @@ class MyApp extends StatelessWidget {
           LandDetailScreen.routeName: (ctx) => LandDetailScreen(),
           RoomDetailScreen.routeName: (ctx) => RoomDetailScreen(),
           TabScreen.routeName: (ctx) => TabScreen(),
+          MyProperties.routeName: (ctx) => MyProperties(),
+          MyPropertyDetailScreen.routeName: (ctx) => MyPropertyDetailScreen(),
+          FavoriteDetails.routeName: (ctx) => FavoriteDetails()
         },
       ),
     );

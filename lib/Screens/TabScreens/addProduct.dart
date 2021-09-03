@@ -2,9 +2,9 @@ import 'dart:core';
 import 'dart:ui';
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:intl/intl.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ghaarjaggaa/Components/drawer.dart';
@@ -25,7 +25,7 @@ class AddProduct extends StatefulWidget {
 
 class _AddProductState extends State<AddProduct> {
   bool isEditing = false;
-  File? _storeImage;
+  File? image;
   String? _previewImageUrl;
   final _formKey = GlobalKey<FormState>();
   var purpose = "Sell";
@@ -45,7 +45,6 @@ class _AddProductState extends State<AddProduct> {
   List<String> facilities = [];
   var price = 0.0;
   var priceUnit = "/month";
-  File? imageProperty;
   var address = "";
   var description = "";
   var name = "";
@@ -89,8 +88,21 @@ class _AddProductState extends State<AddProduct> {
         ),
       );
 
-  void _postToDb() {
-    FirebaseFirestore.instance.collection('$propertyType').doc().set({
+  void _postToDb() async {
+//image uploading
+    final ref = FirebaseStorage.instance
+        .ref()
+        .child('userImages')
+        .child(FirebaseFirestore.instance.collection('properties').doc().id);
+    await ref.putFile(image!);
+    final  imageUrl =await ref.getDownloadURL();
+
+    // Future<void> downloadURLExample() async {
+    //   String downloadURL = await firebase_storage.FirebaseStorage.instance
+    //       .ref('users/123/avatar.jpg')
+    //       .getDownloadURL();
+
+    FirebaseFirestore.instance.collection('properties').doc().set({
       'purpose': purpose,
       'propertyType': propertyType,
       'propertyTitle': propertyTitle,
@@ -114,36 +126,10 @@ class _AddProductState extends State<AddProduct> {
       'email': email,
       'phoneNumber': phoneNumber,
       'createdAt': Timestamp.now(),
+      'isFavorite': false,
+      'userID': FirebaseAuth.instance.currentUser!.uid,
+      'imageUrl': imageUrl,
     });
-    //   FirebaseFirestore.instance
-    //       .collection('UserProperties')
-    //       .doc('$name:$phoneNumber')
-    //       .collection('$purpose')
-    //       .doc('$propertyType')
-    //       .set({
-    //     'purpose': purpose,
-    //     'propertyType': propertyType,
-    //     'propertyTitle': propertyTitle,
-    //     'area': propertyArea,
-    //     'areaUnit': areaUnit,
-    //     'propertyFace': propertyFace,
-    //     'roadAccess': roadAccess,
-    //     'roadType': roadType,
-    //     'builtYear': builtYear,
-    //     'noOfBedrooms': noOfBedroom,
-    //     'noOfBathrooms': noOfBathroom,
-    //     'noOfParking': noOfParking,
-    //     'noOfFloors': noOfFloors,
-    //     'noOfKitchen': kitchen,
-    //     'facilities': facilities,
-    //     'price': price,
-    //     'priceUnit': priceUnit,
-    //     'address': address,
-    //     'description': description,
-    //     'name': name,
-    //     'email': email,
-    //     'phoneNumber': phoneNumber
-    //   });
   }
 
   void _trySubmit() {
@@ -182,24 +168,20 @@ class _AddProductState extends State<AddProduct> {
   }
 
   Future _takePicture() async {
-    final picker = ImagePicker();
-    final imageFile =
-        await picker.pickImage(source: ImageSource.camera, maxWidth: 600);
+    final imageFile = await ImagePicker()
+        .pickImage(source: ImageSource.camera, maxWidth: 600);
     setState(() {
-      _storeImage = File(imageFile!.path);
+      image = File(imageFile!.path);
     });
-    imageProperty = _storeImage;
     Navigator.of(context).pop();
   }
 
   Future _selectPicture() async {
-    final picker = ImagePicker();
-    final imageFile =
-        await picker.pickImage(source: ImageSource.gallery, maxWidth: 600);
+    final imageFile = await ImagePicker()
+        .pickImage(source: ImageSource.gallery, maxWidth: 600);
     setState(() {
-      _storeImage = File(imageFile!.path);
+      image = File(imageFile!.path);
     });
-    imageProperty = _storeImage;
     Navigator.of(context).pop();
   }
 
@@ -943,14 +925,14 @@ class _AddProductState extends State<AddProduct> {
                   SizedBox(
                     height: 10,
                   ),
-                  _storeImage != null
+                  image != null
                       ? Stack(
                           children: [
                             Container(
                                 height: 300,
                                 width: double.infinity,
                                 child: Image.file(
-                                  _storeImage!,
+                                  image!,
                                   fit: BoxFit.cover,
                                 )),
                             Positioned(
@@ -961,7 +943,7 @@ class _AddProductState extends State<AddProduct> {
                                   color: Colors.red,
                                   onPressed: () {
                                     setState(() {
-                                      _storeImage = null;
+                                      image = null;
                                     });
                                   },
                                 ))

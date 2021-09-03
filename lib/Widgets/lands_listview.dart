@@ -10,7 +10,10 @@ class LandsListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('Land').snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('properties')
+          .where('propertyType', isEqualTo: 'Land')
+          .snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) {
           return Center(child: const CircularProgressIndicator());

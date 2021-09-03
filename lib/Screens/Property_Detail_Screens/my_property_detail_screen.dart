@@ -1,33 +1,21 @@
+import 'package:flutter/material.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:readmore/readmore.dart';
 
-class RoomDetailScreen extends StatefulWidget {
-  static const routeName = "/room_detail_screen";
+class MyPropertyDetailScreen extends StatefulWidget {
+  static const routeName = "/myPropertyDetailScreen";
 
-  const RoomDetailScreen({Key? key}) : super(key: key);
+  const MyPropertyDetailScreen({Key? key}) : super(key: key);
 
   @override
-  _RoomDetailScreenState createState() => _RoomDetailScreenState();
+  _MyPropertyDetailScreenState createState() => _MyPropertyDetailScreenState();
 }
 
-class _RoomDetailScreenState extends State<RoomDetailScreen> {
+class _MyPropertyDetailScreenState extends State<MyPropertyDetailScreen> {
   final String uId = FirebaseAuth.instance.currentUser!.uid;
-
-  var _isFavorite = false;
-
-  void _postFavorites() {
-    setState(() {
-      _isFavorite = !_isFavorite;
-    });
-    FirebaseFirestore.instance
-        .collection('properties')
-        .doc(uId)
-        .update({'isFavorite': _isFavorite});
-    // .doc(uId).collection().doc()
-    // .set({'isFavorite': _isFavorite});
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +25,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
     final image = routeArgs['image'];
     final price = routeArgs['price'];
     final availability = routeArgs['availability'];
-    final id = routeArgs['id'];
+    final docId = routeArgs['id'];
     final roadAccess = routeArgs['roadAccess'];
     final propertyType = routeArgs['propertyType'];
     final noOfFloors = routeArgs['noOfFloors'];
@@ -58,11 +46,13 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
     final propertyArea = routeArgs['propertyArea'];
     final roadType = routeArgs['roadType'];
     final noOfBathroom = routeArgs['noOfBathroom'];
+
     return Scaffold(
       backgroundColor: Colors.grey[850],
       appBar: AppBar(
+        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.edit))],
         backgroundColor: Colors.grey[700],
-        title: Text("Room"),
+        title: Text("$propertyTitle"),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -73,48 +63,18 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
             builder: (context, snapshot) {
               return Column(
                 children: [
-                  Stack(children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(30),
-                      child: Container(
-                        height: 250,
-                        width: double.infinity,
-                        child: Image.asset(
-                          "assets/images/apartment.jpg",
-                          fit: BoxFit.cover,
-                        ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(30),
+                    child: Container(
+                      height: 250,
+                      width: double.infinity,
+                      child: Image.asset(
+                        "assets/images/apartment.jpg",
+                        fit: BoxFit.cover,
                       ),
                     ),
-                    Positioned(
-                      child: FutureBuilder<DocumentSnapshot>(
-                          future: FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(uId)
-                              .get(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return Text('');
-                            }
-                            return IconButton(
-                              onPressed: _postFavorites,
-                              icon: snapshot.data!['isFavorite']
-                                  ? Icon(
-                                      Icons.favorite,
-                                      size: 60,
-                                      color: Colors.red,
-                                    )
-                                  : Icon(
-                                      Icons.favorite_border,
-                                      size: 60,
-                                      color: Colors.white,
-                                    ),
-                            );
-                          }),
-                      bottom: 34,
-                      right: 30,
-                    ),
-                  ]),
+                  ),
+
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ClipRRect(
@@ -123,7 +83,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                         decoration: BoxDecoration(
                           border: Border.all(color: Colors.white12, width: 2),
                         ),
-                        height: 200,
+                        height: 230,
                         width: double.infinity,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),

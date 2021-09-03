@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:ghaarjaggaa/Screens/Property_Detail_Screens/apartment_details.dart';
 import 'package:ghaarjaggaa/Screens/Property_Detail_Screens/my_property_detail_screen.dart';
 
-class ApartmentItem extends StatelessWidget {
+class MyPropertyItem extends StatelessWidget {
 
   final String image;
   final String purpose;
@@ -31,7 +31,7 @@ class ApartmentItem extends StatelessWidget {
   final String docId;
   final int phoneNumber;
 
-  ApartmentItem({
+  MyPropertyItem({
     required this.propertyTitle,
     required this.image,
     required this.price,
@@ -68,7 +68,7 @@ class ApartmentItem extends StatelessWidget {
         child: InkWell(
           onTap: () {
             Navigator.of(context)
-                .pushNamed(ApartmentDetailScreen.routeName, arguments: {
+                .pushNamed(MyPropertyDetailScreen.routeName, arguments: {
               'propertyTitle': propertyTitle,
               'image': image,
               'price': price,
