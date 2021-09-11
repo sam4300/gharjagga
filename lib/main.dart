@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:ghaarjaggaa/Components/testing_screen.dart';
 import 'package:ghaarjaggaa/Screens/Dashboard/dashboard.dart';
 import 'package:ghaarjaggaa/Screens/Dashboard/tabscreen.dart';
 import 'package:ghaarjaggaa/Screens/welcome_screen.dart';
@@ -12,8 +13,12 @@ import 'PropertiesListing/roomslisting.dart';
 import 'Providers/rooms_provider.dart';
 import 'Screens/Property_Detail_Screens/apartment_details.dart';
 import 'Screens/Property_Detail_Screens/my_property_detail_screen.dart';
+import 'Screens/TabScreens/my_Profile.dart';
 import 'Screens/auth_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+import 'Screens/chat_screen.dart';
+import 'Screens/property_Editing_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,6 +55,7 @@ class MyApp extends StatelessWidget {
           TabScreen.routeName: (ctx) => TabScreen(),
           MyProperties.routeName: (ctx) => MyProperties(),
           MyPropertyDetailScreen.routeName: (ctx) => MyPropertyDetailScreen(),
+          MyProfile.routeName: (ctx) => MyProfile(),
         },
       ),
     );

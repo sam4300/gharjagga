@@ -2,7 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ghaarjaggaa/Helpers/database.dart';
+import 'package:ghaarjaggaa/Screens/NoMapAvailableScreen.dart';
+import 'package:ghaarjaggaa/Screens/map_screen.dart';
 import 'package:readmore/readmore.dart';
+
+import '../chat_screen.dart';
 
 class ApartmentDetailScreen extends StatefulWidget {
   static const routeName = "/apartment_detail_screen";
@@ -18,33 +23,34 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailScreen> {
   var _isFavorite = false;
 
   void _addToFavorite(
-    String imageUrl,
-    String purpose,
-    String propertyType,
-    String propertyTitle,
-    double propertyArea,
-    String areaUnit,
-    String propertyFace,
-    double roadAccess,
-    String roadType,
-    int builtYear,
-    int noOfBedroom,
-    int noOfBathroom,
-    int noOfParking,
-    int noOfFloors,
-    int kitchen,
-    List<String> facilities,
-    double price,
-    String availability,
-    String priceUnit,
-    String address,
-    String description,
-    String name,
-    String email,
-    String docId,
-    int phoneNumber,
-    BuildContext context,
-  ) async {
+      String imageUrl,
+      String purpose,
+      String propertyType,
+      String propertyTitle,
+      double propertyArea,
+      String areaUnit,
+      String propertyFace,
+      double roadAccess,
+      String roadType,
+      int builtYear,
+      int noOfBedroom,
+      int noOfBathroom,
+      int noOfParking,
+      int noOfFloors,
+      int kitchen,
+      List<String> facilities,
+      double price,
+      String availability,
+      String priceUnit,
+      String address,
+      String description,
+      String name,
+      String email,
+      String docId,
+      int phoneNumber,
+      BuildContext context,
+      double latitude,
+      double longitude) async {
     setState(() {
       _isFavorite = !_isFavorite;
     });
@@ -79,7 +85,148 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailScreen> {
       'isFavorite': _isFavorite,
       'userID': FirebaseAuth.instance.currentUser!.uid,
       'imageUrl': imageUrl,
+      'latitude': latitude,
+      'longitude': longitude
     });
+  }
+
+  void contactBottomSheet(BuildContext context, int phoneNumber, String name,
+      String email, String uploadedBy) {
+    showModalBottomSheet(
+        context: context,
+        builder: (_) {
+          return Container(
+            height: 200,
+            color: Colors.grey[850],
+            child: Column(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    height: 100,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.white12, width: 2)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          CircleAvatar(radius: 20, child: Icon(Icons.person)),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text(
+                                name,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20),
+                              ),
+                              Text("$phoneNumber",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15))
+                            ],
+                          ),
+                          SizedBox(
+                            width: 60,
+                          ),
+                          Expanded(
+                            child: TextButton(
+                              onPressed: () {},
+                              child: Icon(Icons.phone),
+                              style: TextButton.styleFrom(
+                                  primary: Colors.white,
+                                  backgroundColor: Colors.green),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  child: Row(
+                    children: [
+                      Expanded(
+                          child: Column(
+                        children: [
+                          TextButton(
+                            onPressed: () {},
+                            child: Icon(
+                              Icons.mail,
+                              color: Colors.green,
+                              size: 60,
+                            ),
+                          ),
+                          Text(
+                            "$email",
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 15,
+                            ),
+                          )
+                        ],
+                      )),
+                      Expanded(
+                          child: Column(
+                        children: [
+                          TextButton(
+                              onPressed: () {
+                                createChatRoomAndStartConversation(uploadedBy);
+                                // Navigator.of(context).pushNamed(
+                                //     ChatScreen.routeName,
+                                //     arguments: {
+                                //       'userName': name,
+                                //       'uploadedBy': uploadedBy,
+                                //     });
+                              },
+                              child: Icon(
+                                Icons.chat,
+                                color: Colors.green,
+                                size: 60,
+                              )),
+                          Text(
+                            "Chat with owner",
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 15,
+                            ),
+                          )
+                        ],
+                      ))
+                    ],
+                  ),
+                )
+              ],
+            ),
+          );
+        });
+  }
+
+  DatabaseMethods databaseMethod = DatabaseMethods();
+
+  createChatRoomAndStartConversation(String uploadedBy) async {
+    await databaseMethod.fetchCurrentUserData();
+    await databaseMethod.fetchUploadedByUserData(uploadedBy);
+    String chatRoomId =
+        getChatRoomId(databaseMethod.ownerName, databaseMethod.name);
+    List<String> users = [databaseMethod.ownerName, databaseMethod.name];
+    Map<String, dynamic> chatRoomMap = {
+      "users": users,
+      "chatRoomId": chatRoomId
+    };
+    databaseMethod.createChatRoom(chatRoomId, chatRoomMap);
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ChatScreen(
+                  chatRoomId: chatRoomId
+                )));
   }
 
   @override
@@ -111,10 +258,35 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailScreen> {
     final propertyArea = routeArgs['propertyArea'];
     final roadType = routeArgs['roadType'].toString();
     final noOfBathroom = routeArgs['noOfBathroom'];
+    final uploadedBy = routeArgs['uploadedBy'];
+    final latitude = routeArgs['latitude'];
+    final longitude = routeArgs['longitude'];
 
     return Scaffold(
       backgroundColor: Colors.grey[850],
       appBar: AppBar(
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => latitude != 1.1
+                          ? MapScreen(
+                              latitude: double.parse('$latitude'),
+                              longitude: double.parse('$longitude'),
+                              title: propertyTitle,
+                              price: double.parse('$price'),
+                            )
+                          : NoMapAvailable(propertyTitle),
+                    ),
+                  );
+                },
+                child: Text('Map')),
+          )
+        ],
         backgroundColor: Colors.grey[700],
         title: Text("$propertyTitle"),
       ),
@@ -180,6 +352,8 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailScreen> {
                                     docId,
                                     int.parse('$phoneNumber'),
                                     context,
+                                    double.parse('$latitude'),
+                                    double.parse('$longitude'),
                                   );
                                 },
                                 icon: Icon(
@@ -298,55 +472,73 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailScreen> {
                       ),
                     ),
                   ),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: Container(
-                      height: 100,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.white12, width: 2)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            CircleAvatar(radius: 20, child: Icon(Icons.person)),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Text(
-                                  "$name",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20),
-                                ),
-                                Text("$phoneNumber",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15))
-                              ],
-                            ),
-                            SizedBox(
-                              width: 60,
-                            ),
-                            Expanded(
-                              child: TextButton(
-                                onPressed: () {},
-                                child: Text("Contact now"),
-                                style: TextButton.styleFrom(
-                                    primary: Colors.white,
-                                    backgroundColor: Colors.green),
+                  uploadedBy != uId
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Container(
+                            height: 100,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Colors.white12, width: 2)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                      radius: 20, child: Icon(Icons.person)),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Text(
+                                        "$name",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20),
+                                      ),
+                                      Text("$phoneNumber",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15))
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    width: 60,
+                                  ),
+                                  Expanded(
+                                    child: TextButton(
+                                      onPressed: () {
+                                        contactBottomSheet(
+                                            context,
+                                            int.parse(phoneNumber.toString()),
+                                            name,
+                                            email,
+                                            uploadedBy.toString());
+                                      },
+                                      child: Text("Contact now"),
+                                      style: TextButton.styleFrom(
+                                          primary: Colors.white,
+                                          backgroundColor: Colors.green),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
+                          ),
+                        )
+                      : ElevatedButton(
+                          child: Text(
+                            "Own Property",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
+                          onPressed: () {},
                         ),
-                      ),
-                    ),
-                  ),
                   SizedBox(height: 15),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -663,25 +855,44 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailScreen> {
                     padding: const EdgeInsets.all(8.0),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border:
-                                Border.all(color: Colors.white12, width: 2)),
-                        height: 200,
-                        width: double.infinity,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Amenities",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold),
+                      child: SingleChildScrollView(
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border:
+                                  Border.all(color: Colors.white12, width: 2)),
+                          height: 300,
+                          width: double.infinity,
+                          child: SingleChildScrollView(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Facilities ",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  GridView.count(
+                                    crossAxisCount: 2,
+                                    childAspectRatio: 3.5,
+                                    shrinkWrap: true,
+                                    mainAxisSpacing: 0,
+                                    children: List.generate(facilities.length,
+                                        (index) {
+                                      return Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: ElevatedButton(
+                                            onPressed: () {},
+                                            child: Text(facilities[index])),
+                                      );
+                                    }),
+                                  )
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
                       ),
@@ -718,5 +929,13 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailScreen> {
         ),
       ),
     );
+  }
+}
+
+getChatRoomId(String a, String b) {
+  if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
+    return "$b\_$a";
+  } else {
+    return "$a\_$b";
   }
 }

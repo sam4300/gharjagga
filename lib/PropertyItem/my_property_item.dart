@@ -30,6 +30,8 @@ class MyPropertyItem extends StatelessWidget {
   final String email;
   final String docId;
   final int phoneNumber;
+  final double latitude;
+  final double longitude;
 
   MyPropertyItem({
     required this.propertyTitle,
@@ -57,6 +59,8 @@ class MyPropertyItem extends StatelessWidget {
     required this.kitchen,
     required this.facilities,
     required this.address,
+    required this.latitude,
+    required this.longitude,
   });
 
   @override
@@ -68,7 +72,7 @@ class MyPropertyItem extends StatelessWidget {
         child: InkWell(
           onTap: () {
             Navigator.of(context)
-                .pushNamed(MyPropertyDetailScreen.routeName, arguments: {
+                .pushReplacementNamed(MyPropertyDetailScreen.routeName, arguments: {
               'propertyTitle': propertyTitle,
               'image': image,
               'price': price,
@@ -93,7 +97,9 @@ class MyPropertyItem extends StatelessWidget {
               'priceUnit': priceUnit,
               'noOfBedroom': noOfBedroom,
               'propertyArea': propertyArea,
-              'roadType': roadType
+              'roadType': roadType,
+              'latitude':latitude,
+              'longitude':longitude
             });
           },
           child: Row(

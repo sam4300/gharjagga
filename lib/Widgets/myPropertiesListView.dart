@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:ghaarjaggaa/PropertyItem/apartment_item.dart';
 import 'package:ghaarjaggaa/PropertyItem/my_property_item.dart';
-import 'package:ghaarjaggaa/Providers/dbProvider.dart';
 
 class MyPropertyListView extends StatefulWidget {
   @override
@@ -27,6 +25,17 @@ class _MyPropertyListViewState extends State<MyPropertyListView> {
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) {
           return Center(child: const CircularProgressIndicator());
+        }
+        else if (snapshot.data!.docs.isEmpty) {
+          return Center(
+            child: Text(
+              'You have not posted any property',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25),
+            ),
+          );
         }
         return ListView.builder(
           itemCount: snapshot.data!.docs.length,
@@ -57,6 +66,8 @@ class _MyPropertyListViewState extends State<MyPropertyListView> {
               noOfBedroom: snapshot.data!.docs[index]['noOfBedrooms'],
               propertyArea: snapshot.data!.docs[index]['area'],
               roadType: snapshot.data!.docs[index]['roadType'],
+              latitude: snapshot.data!.docs[index]['latitude'],
+              longitude: snapshot.data!.docs[index]['longitude'],
             );
           },
         );

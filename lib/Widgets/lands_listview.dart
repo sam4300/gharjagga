@@ -18,6 +18,17 @@ class LandsListView extends StatelessWidget {
         if (!snapshot.hasData) {
           return Center(child: const CircularProgressIndicator());
         }
+        else if (snapshot.data!.docs.isEmpty) {
+          return Center(
+            child: Text(
+              'No Lands Found',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25),
+            ),
+          );
+        }
         return ListView.builder(
           itemCount: snapshot.data!.docs.length,
           itemBuilder: (context, index) {
@@ -47,6 +58,10 @@ class LandsListView extends StatelessWidget {
               noOfBedroom: snapshot.data!.docs[index]['noOfBedrooms'],
               propertyArea: snapshot.data!.docs[index]['area'],
               roadType: snapshot.data!.docs[index]['roadType'],
+              uploadedBy: snapshot.data!.docs[index]['userID'],
+              latitude: snapshot.data!.docs[index]['latitude'],
+              longitude: snapshot.data!.docs[index]['longitude'],
+
             );
           },
         );

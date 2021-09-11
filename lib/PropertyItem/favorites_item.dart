@@ -28,6 +28,8 @@ class FavoriteItems extends StatelessWidget {
   final String email;
   final String docId;
   final int phoneNumber;
+  final double latitude;
+  final double longitude;
 
   FavoriteItems({
     required this.propertyTitle,
@@ -55,6 +57,8 @@ class FavoriteItems extends StatelessWidget {
     required this.kitchen,
     required this.facilities,
     required this.address,
+    required this.latitude,
+    required this.longitude,
   });
 
   @override
@@ -91,7 +95,9 @@ class FavoriteItems extends StatelessWidget {
               'priceUnit': priceUnit,
               'noOfBedroom': noOfBedroom,
               'propertyArea': propertyArea,
-              'roadType': roadType
+              'roadType': roadType,
+              'latitude':latitude,
+              'longitude':longitude
             });
           },
           child: Row(

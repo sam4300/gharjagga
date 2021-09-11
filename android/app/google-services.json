@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "224761737155",
-    "project_id": "plasma-figure-324203",
-    "storage_bucket": "plasma-figure-324203.appspot.com"
+    "project_number": "736465860875",
+    "project_id": "gharjagga-a6f89",
+    "storage_bucket": "gharjagga-a6f89.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:224761737155:android:11dd3d70fe19ba0965d776",
+        "mobilesdk_app_id": "1:736465860875:android:b342fc268fe8a12b868a0e",
         "android_client_info": {
           "package_name": "com.example.ghaarjaggaa"
         }
       },
       "oauth_client": [
         {
-          "client_id": "224761737155-o31egc6ve5sgt4ql2mle559l6p868vok.apps.googleusercontent.com",
+          "client_id": "736465860875-e2mhbdq3tobtjqcanmp4e75grru3itev.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAJg1fc4gT1FyiTPVzD-ea-LAJ2e2uj_4M"
+          "current_key": "AIzaSyCjfnyXS_s2S0L3xSq1Zv0LJw2S0p6--rU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "224761737155-o31egc6ve5sgt4ql2mle559l6p868vok.apps.googleusercontent.com",
+              "client_id": "736465860875-e2mhbdq3tobtjqcanmp4e75grru3itev.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

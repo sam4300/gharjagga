@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ghaarjaggaa/Providers/dbProvider.dart';
+import 'package:ghaarjaggaa/Screens/NotificationScreen.dart';
 import 'package:provider/provider.dart';
 
 class MainDrawer extends StatelessWidget {
@@ -46,10 +47,15 @@ class MainDrawer extends StatelessWidget {
                               style: TextStyle(color: Colors.white),
                             );
                           }
-                          return Text(
-                            snapshot.data!['email'],
-                            style: TextStyle(color: Colors.white),
-                          );
+                          return snapshot.data!.exists
+                              ? Text(
+                                  snapshot.data!['email'],
+                                  style: TextStyle(color: Colors.white),
+                                )
+                              : Text(
+                                  'No user',
+                                  style: TextStyle(color: Colors.white),
+                                );
                         }),
                   ],
                 ),
@@ -69,6 +75,24 @@ class MainDrawer extends StatelessWidget {
                 ),
                 onTap: () {
                   FirebaseAuth.instance.signOut();
+                }),
+            ListTile(
+                leading: Icon(
+                  Icons.notifications,
+                  color: Colors.white,
+                ),
+                title: Text(
+                  'Notifications',
+                  style: TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const NotificationScreen()));
                 }),
           ],
         ),

@@ -8,9 +8,12 @@ import 'package:ghaarjaggaa/PropertiesListing/myPropertyListing.dart';
 import 'package:ghaarjaggaa/Providers/dbProvider.dart';
 
 class MyProfile extends StatefulWidget {
+  static const routeName = '/my_profile';
+
   @override
   MapScreenState createState() => MapScreenState();
 }
+
 class MapScreenState extends State<MyProfile>
     with SingleTickerProviderStateMixin {
   String email = "";
@@ -59,12 +62,6 @@ class MapScreenState extends State<MyProfile>
                                           fontWeight: FontWeight.bold),
                                     ),
                                   ],
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    DBProvider().getCurrentUserId();
-                                  },
-                                  child: Text('press'),
                                 ),
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.end,

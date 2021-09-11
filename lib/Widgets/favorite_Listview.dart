@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ghaarjaggaa/PropertyItem/favorites_item.dart';
 
-
 class FavoriteListView extends StatefulWidget {
   @override
   _FavoriteListViewState createState() => _FavoriteListViewState();
@@ -23,11 +22,21 @@ class _FavoriteListViewState extends State<FavoriteListView> {
           .collection('favorites')
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .collection('myFavorites')
-          .where('isFavorite', isEqualTo:true)
+          .where('isFavorite', isEqualTo: true)
           .snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) {
           return Center(child: const CircularProgressIndicator());
+        } else if (snapshot.data!.docs.isEmpty) {
+          return Center(
+            child: Text(
+              'No Favorites Yet',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25),
+            ),
+          );
         }
         return ListView.builder(
           itemCount: snapshot.data!.docs.length,
@@ -58,6 +67,8 @@ class _FavoriteListViewState extends State<FavoriteListView> {
               noOfBedroom: snapshot.data!.docs[index]['noOfBedrooms'],
               propertyArea: snapshot.data!.docs[index]['area'],
               roadType: snapshot.data!.docs[index]['roadType'],
+              latitude: snapshot.data!.docs[index]['latitude'],
+              longitude: snapshot.data!.docs[index]['longitude'],
             );
           },
         );

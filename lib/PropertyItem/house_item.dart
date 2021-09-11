@@ -29,6 +29,9 @@ class HouseItem extends StatelessWidget {
   final String email;
   final String id;
   final int phoneNumber;
+  final String uploadedBy;
+  final double latitude;
+  final double longitude;
 
   HouseItem({
     required this.propertyTitle,
@@ -56,6 +59,9 @@ class HouseItem extends StatelessWidget {
     required this.kitchen,
     required this.facilities,
     required this.address,
+    required this.uploadedBy,
+    required this.latitude,
+    required this.longitude,
   });
 
   @override
@@ -92,7 +98,11 @@ class HouseItem extends StatelessWidget {
             'priceUnit': priceUnit,
             'noOfBedroom': noOfBedroom,
             'propertyArea': propertyArea,
-            'roadType': roadType
+            'roadType': roadType,
+            'uploadedBy':uploadedBy,
+            'latitude':latitude,
+            'longitude':longitude
+
           });
         },
         child: Row(

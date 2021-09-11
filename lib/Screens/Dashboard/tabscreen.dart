@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ghaarjaggaa/Screens/TabScreens/addProduct.dart';
 import 'package:ghaarjaggaa/Screens/TabScreens/my_Profile.dart';
-import 'package:ghaarjaggaa/Screens/TabScreens/notificationScreen.dart';
+import 'package:ghaarjaggaa/Screens/TabScreens/Chats.dart';
 import 'package:provider/provider.dart';
 
 import 'dashboard.dart';
@@ -9,17 +9,17 @@ import '../TabScreens/favoriteScreen.dart';
 
 class TabScreen extends StatefulWidget {
   static const routeName = "/tab_screen";
+
   @override
   _TabScreenState createState() => _TabScreenState();
 }
 
 class _TabScreenState extends State<TabScreen> {
-
   List<Widget> _pages = [
     Dashboard(),
     Favorites(),
     AddProduct(),
-    NotificationScreen(),
+    ChatScreenTab(),
     MyProfile(),
   ];
   bool isEditing = false;
@@ -83,8 +83,8 @@ class _TabScreenState extends State<TabScreen> {
             label: "Add",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: "Notifications",
+            icon: Icon(Icons.chat),
+            label: "Chats",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
@@ -95,5 +95,4 @@ class _TabScreenState extends State<TabScreen> {
       body: _pages[_selectPageIndex],
     );
   }
-
 }

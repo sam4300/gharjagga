@@ -1,8 +1,11 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:ghaarjaggaa/PropertiesListing/myPropertyListing.dart';
+import 'package:ghaarjaggaa/Screens/property_Editing_screen.dart';
 import 'package:readmore/readmore.dart';
 
 class MyPropertyDetailScreen extends StatefulWidget {
@@ -16,6 +19,21 @@ class MyPropertyDetailScreen extends StatefulWidget {
 
 class _MyPropertyDetailScreenState extends State<MyPropertyDetailScreen> {
   final String uId = FirebaseAuth.instance.currentUser!.uid;
+  var _isLoading = false;
+
+  void _deleteFromDatabase(String docId, BuildContext context) async {
+    await FirebaseFirestore.instance
+        .collection('properties')
+        .doc(docId)
+        .delete();
+    await FirebaseFirestore.instance
+        .collection('favorites')
+        .doc(uId)
+        .collection('myFavorites')
+        .doc(docId)
+        .delete();
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +43,7 @@ class _MyPropertyDetailScreenState extends State<MyPropertyDetailScreen> {
     final image = routeArgs['image'];
     final price = routeArgs['price'];
     final availability = routeArgs['availability'];
-    final docId = routeArgs['id'];
+    final docId = routeArgs['id'].toString();
     final roadAccess = routeArgs['roadAccess'];
     final propertyType = routeArgs['propertyType'];
     final noOfFloors = routeArgs['noOfFloors'];
@@ -50,7 +68,85 @@ class _MyPropertyDetailScreenState extends State<MyPropertyDetailScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[850],
       appBar: AppBar(
-        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.edit))],
+        actions: [
+          IconButton(
+              onPressed: () {
+                showDialog<String>(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    title:
+                        Text('Are you sure you want to delete this property'),
+                    actions: [
+                      TextButton(
+                        child: const Text('No'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                          onPressed: () {
+                            _deleteFromDatabase(docId, context);
+                          },
+                          child: Text("Yes")),
+                      _isLoading ? CircularProgressIndicator() : Text(''),
+                    ],
+                  ),
+                );
+              },
+              icon: Icon(
+                Icons.delete,
+                color: Colors.red,
+              )),
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PropertyEditingScreen(
+                          propertyArea1: double.parse(propertyArea.toString()),
+                          noOfFloors1: int.parse(noOfFloors.toString()),
+                          propertyTitle1: propertyTitle.toString(),
+                          noOfBedrooms: int.parse(noOfBedroom.toString()),
+                          docId: docId,
+                          builtYear1: int.parse(builtYear.toString()),
+                          description1: description.toString(),
+                          price1: double.parse(price.toString()),
+                          propertyFace1: propertyFace.toString(),
+                          propertyType1: propertyType.toString(),
+                          purpose1: purpose.toString(),
+                          roadAccess1: double.parse(roadAccess.toString()))),
+                );
+                // Navigator.of(context)
+                //     .pushNamed(PropertyEditingScreen.routeName, arguments: {
+                //   'propertyTitle': propertyTitle,
+                //   'image': image,
+                //   'price': price,
+                //   'availability': availability,
+                //   'id': docId,
+                //   'roadAccess': roadAccess,
+                //   'propertyType': propertyType,
+                //   'noOfFloors': int.parse('$noOfFloors'),
+                //   'kitchen': int.parse('$kitchen'),
+                //   'facilities': facilities,
+                //   'phoneNumber': phoneNumber,
+                //   'name': name,
+                //   'noOfParking': int.parse('$noOfParking'),
+                //   'noOfBathroom': int.parse('$noOfBathroom'),
+                //   'description': description,
+                //   'areaUnit': areaUnit,
+                //   'purpose': purpose,
+                //   'email': email,
+                //   'address': address,
+                //   'builtYear': builtYear,
+                //   'propertyFace': propertyFace,
+                //   'priceUnit': priceUnit,
+                //   'noOfBedroom': int.parse('$noOfBedroom'),
+                //   'propertyArea': propertyArea,
+                //   'roadType': roadType
+                // });
+              },
+              icon: Icon(Icons.edit)),
+        ],
         backgroundColor: Colors.grey[700],
         title: Text("$propertyTitle"),
       ),
@@ -68,8 +164,8 @@ class _MyPropertyDetailScreenState extends State<MyPropertyDetailScreen> {
                     child: Container(
                       height: 250,
                       width: double.infinity,
-                      child: Image.asset(
-                        "assets/images/apartment.jpg",
+                      child: Image.network(
+                        image.toString(),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -150,55 +246,6 @@ class _MyPropertyDetailScreenState extends State<MyPropertyDetailScreen> {
                               ),
                             ],
                           ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: Container(
-                      height: 100,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.white12, width: 2)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            CircleAvatar(radius: 20, child: Icon(Icons.person)),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Text(
-                                  "$name",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20),
-                                ),
-                                Text("$phoneNumber",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15))
-                              ],
-                            ),
-                            SizedBox(
-                              width: 60,
-                            ),
-                            Expanded(
-                              child: TextButton(
-                                onPressed: () {},
-                                child: Text("Contact now"),
-                                style: TextButton.styleFrom(
-                                    primary: Colors.white,
-                                    backgroundColor: Colors.green),
-                              ),
-                            ),
-                          ],
                         ),
                       ),
                     ),

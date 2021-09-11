@@ -7,7 +7,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ghaarjaggaa/Components/drawer.dart';
 import 'package:ghaarjaggaa/Helpers/location_helper.dart';
 import 'package:ghaarjaggaa/Screens/Dashboard/tabscreen.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -15,16 +14,42 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
 
-import '../map_screen.dart';
+import 'map_screen.dart';
 
-class AddProduct extends StatefulWidget {
-  static const routeName = "/addProperty";
+class PropertyEditingScreen extends StatefulWidget {
+  static const routeName = "/edit_Property";
+  final String propertyTitle1;
+  final int noOfBedrooms;
+  final String docId;
+  final String propertyType1;
+  final String purpose1;
+  final String description1;
+  final String propertyFace1;
+  final double roadAccess1;
+  final int builtYear1;
+  final double price1;
+  final int noOfFloors1;
+  final double propertyArea1;
+
+  PropertyEditingScreen(
+      {required this.propertyTitle1,
+      required this.noOfBedrooms,
+      required this.docId,
+      required this.roadAccess1,
+      required this.builtYear1,
+      required this.description1,
+      required this.price1,
+      required this.propertyFace1,
+      required this.propertyType1,
+      required this.purpose1,
+      required this.noOfFloors1,
+      required this.propertyArea1});
 
   @override
-  _AddProductState createState() => _AddProductState();
+  _PropertyEditingScreenState createState() => _PropertyEditingScreenState();
 }
 
-class _AddProductState extends State<AddProduct> {
+class _PropertyEditingScreenState extends State<PropertyEditingScreen> {
   final latController = TextEditingController();
   final lonController = TextEditingController();
   bool isEditing = false;
@@ -90,7 +115,7 @@ class _AddProductState extends State<AddProduct> {
         ),
       );
 
-  Future<void> _postToDb() async {
+  Future<void> _postToDb(String docId, BuildContext context) async {
     setState(() {
       isEditing = true;
     });
@@ -107,7 +132,12 @@ class _AddProductState extends State<AddProduct> {
     //       .ref('users/123/avatar.jpg')
     //       .getDownloadURL();
 
-    FirebaseFirestore.instance.collection('properties').doc().set({
+    FirebaseFirestore.instance
+        .collection('favorites')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('myFavorites')
+        .doc(docId)
+        .update({
       'purpose': purpose,
       'propertyType': propertyType,
       'propertyTitle': propertyTitle,
@@ -131,7 +161,33 @@ class _AddProductState extends State<AddProduct> {
       'email': email,
       'phoneNumber': phoneNumber,
       'createdAt': Timestamp.now(),
-      'isFavorite': false,
+      'userID': FirebaseAuth.instance.currentUser!.uid,
+      'imageUrl': imageUrl,
+    });
+    FirebaseFirestore.instance.collection('properties').doc(docId).update({
+      'purpose': purpose,
+      'propertyType': propertyType,
+      'propertyTitle': propertyTitle,
+      'area': propertyArea,
+      'areaUnit': areaUnit,
+      'propertyFace': propertyFace,
+      'roadAccess': roadAccess,
+      'roadType': roadType,
+      'builtYear': builtYear,
+      'noOfBedrooms': noOfBedroom,
+      'noOfBathrooms': noOfBathroom,
+      'noOfParking': noOfParking,
+      'noOfFloors': noOfFloors,
+      'noOfKitchen': kitchen,
+      'facilities': facilities,
+      'price': price,
+      'priceUnit': priceUnit,
+      'address': address,
+      'description': description,
+      'name': name,
+      'email': email,
+      'phoneNumber': phoneNumber,
+      'createdAt': Timestamp.now(),
       'userID': FirebaseAuth.instance.currentUser!.uid,
       'imageUrl': imageUrl,
       'latitude':
@@ -141,19 +197,19 @@ class _AddProductState extends State<AddProduct> {
     });
   }
 
-  Future<void> _trySubmit() async {
+  Future<void> _trySubmit(String docId, BuildContext context) async {
     final isValid = _formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
     if (isValid) {
       _formKey.currentState!.save();
-      await _postToDb();
+      await _postToDb(docId, context);
       setState(() {
         isEditing = false;
       });
       showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          title: Text('Property Successfully Added'),
+          title: Text('Property Successfully Updated'),
           actions: [
             TextButton(
               child: const Text('Ok'),
@@ -210,16 +266,17 @@ class _AddProductState extends State<AddProduct> {
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        drawer: MainDrawer(),
         backgroundColor: Colors.grey[850],
         appBar: AppBar(
-          title: Text("Add Property"),
+          title: Text("Update Property"),
           backgroundColor: Colors.grey[700],
           actions: [
             TextButton(
-                onPressed: _trySubmit,
+                onPressed: () {
+                  _trySubmit(widget.docId, context);
+                },
                 child: Text(
-                  isEditing ? "Saving" : "Save",
+                  isEditing ? "Updating" : "Update",
                   style: TextStyle(fontSize: 22, color: Colors.green),
                 ))
           ],
@@ -332,6 +389,7 @@ class _AddProductState extends State<AddProduct> {
                   Text("Property Title:",
                       style: TextStyle(color: Colors.green, fontSize: 20)),
                   TextFormField(
+                    initialValue: widget.propertyTitle1,
                     autofocus: false,
                     decoration: InputDecoration(
                       hintText: "Enter property title",
@@ -361,6 +419,7 @@ class _AddProductState extends State<AddProduct> {
                                 style: TextStyle(
                                     color: Colors.green, fontSize: 20)),
                             TextFormField(
+                              initialValue: widget.propertyArea1.toString(),
                               keyboardType: TextInputType.number,
                               autofocus: false,
                               decoration: InputDecoration(
@@ -773,6 +832,9 @@ class _AddProductState extends State<AddProduct> {
                       ),
                     ],
                   ),
+                  SizedBox(
+                    height: 10,
+                  ),
                   Row(
                     children: [
                       Expanded(
@@ -1102,6 +1164,7 @@ class _AddProductState extends State<AddProduct> {
                     style: TextStyle(color: Colors.green, fontSize: 20),
                   ),
                   TextFormField(
+                    initialValue: "samar",
                     decoration: InputDecoration(
                       hintText: "Enter your name",
                       hintStyle: TextStyle(color: Colors.white38),
@@ -1123,6 +1186,7 @@ class _AddProductState extends State<AddProduct> {
                     style: TextStyle(color: Colors.green, fontSize: 20),
                   ),
                   TextFormField(
+                    initialValue: FirebaseAuth.instance.currentUser!.email,
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
                       hintText: 'enter your email',
@@ -1144,6 +1208,7 @@ class _AddProductState extends State<AddProduct> {
                     style: TextStyle(color: Colors.green, fontSize: 20),
                   ),
                   TextFormField(
+                    initialValue: "hello",
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       hintText: "Enter your phone number",
