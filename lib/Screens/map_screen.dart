@@ -42,6 +42,10 @@ class _MapScreenState extends State<MapScreen> {
         markers: _markers,
         initialCameraPosition: CameraPosition(
             target: LatLng(widget.latitude, widget.longitude), zoom: 15),
+        myLocationButtonEnabled: true,
+        myLocationEnabled: true,
+        mapToolbarEnabled: true,
+        mapType: MapType.normal,
       ),
     );
   }

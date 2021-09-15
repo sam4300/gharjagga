@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:ghaarjaggaa/Widgets/rooms_listview.dart';
 
-class RoomsList extends StatelessWidget {
+class RoomsList extends StatefulWidget {
   static const routeName = ("/RoomList");
 
   const RoomsList({Key? key}) : super(key: key);
+
+  @override
+  _RoomsListState createState() => _RoomsListState();
+}
+
+class _RoomsListState extends State<RoomsList> {
+  String searchText = "";
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +34,9 @@ class RoomsList extends StatelessWidget {
                 },
               ),
               title: TextField(
+                onChanged: (value) {
+                  searchText = value;
+                },
                 decoration: InputDecoration(
                     fillColor: Colors.grey[800],
                     border: InputBorder.none,
@@ -42,10 +52,16 @@ class RoomsList extends StatelessWidget {
                   Icons.search,
                   color: Colors.blue,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  setState(() {});
+                  FocusScope.of(context).unfocus();
+                },
               ),
             ),
-            Expanded(child: RoomsListView()),
+            Expanded(
+                child: RoomsListView(
+              searchText: searchText,
+            )),
           ],
         ));
   }

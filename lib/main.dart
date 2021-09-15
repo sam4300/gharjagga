@@ -1,6 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:ghaarjaggaa/Components/testing_screen.dart';
+import 'package:ghaarjaggaa/Providers/location_provider.dart';
 import 'package:ghaarjaggaa/Screens/Dashboard/dashboard.dart';
 import 'package:ghaarjaggaa/Screens/Dashboard/tabscreen.dart';
 import 'package:ghaarjaggaa/Screens/welcome_screen.dart';
@@ -20,6 +23,21 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'Screens/chat_screen.dart';
 import 'Screens/property_Editing_screen.dart';
 
+const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'high_importance_channel',
+    'High Importance Notifications',
+    'This channel is used for important notifications.',
+    importance: Importance.high,
+    playSound: true);
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+Future<void> _firebaseMesagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print('A bg message just showed up: ${message.messageId}');
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -31,8 +49,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (ctx) => Rooms(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (ctx) => Rooms(),
+        ),
+        ChangeNotifierProvider(
+          create: (ctx) => LocationProvider(),
+        ),
+      ],
       child: MaterialApp(
         home: StreamBuilder(
           stream: FirebaseAuth.instance.authStateChanges(),

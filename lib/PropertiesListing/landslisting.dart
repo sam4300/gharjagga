@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:ghaarjaggaa/Widgets/lands_listview.dart';
 
-
-class LandsList extends StatelessWidget {
+class LandsList extends StatefulWidget {
   static const routeName = ("/landsList");
 
   const LandsList({Key? key}) : super(key: key);
+
+  @override
+  _LandsListState createState() => _LandsListState();
+}
+
+class _LandsListState extends State<LandsList> {
+  String searchText = "";
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +34,9 @@ class LandsList extends StatelessWidget {
                 },
               ),
               title: TextField(
+                onChanged: (value) {
+                  searchText = value;
+                },
                 decoration: InputDecoration(
                     fillColor: Colors.grey[800],
                     border: InputBorder.none,
@@ -43,10 +52,16 @@ class LandsList extends StatelessWidget {
                   Icons.search,
                   color: Colors.blue,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  setState(() {});
+                  FocusScope.of(context).unfocus();
+                },
               ),
             ),
-            Expanded(child: LandsListView()),
+            Expanded(
+                child: LandsListView(
+              searchText: searchText,
+            )),
           ],
         ));
   }

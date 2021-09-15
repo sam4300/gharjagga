@@ -2,20 +2,24 @@ import 'dart:core';
 import 'dart:ui';
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ghaarjaggaa/Components/drawer.dart';
-import 'package:ghaarjaggaa/Helpers/location_helper.dart';
+import 'package:ghaarjaggaa/Providers/location_provider.dart';
 import 'package:ghaarjaggaa/Screens/Dashboard/tabscreen.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
+import 'package:provider/provider.dart';
 
 import '../map_screen.dart';
+import '../select_map_screen.dart';
 
 class AddProduct extends StatefulWidget {
   static const routeName = "/addProperty";
@@ -167,10 +171,17 @@ class _AddProductState extends State<AddProduct> {
     }
   }
 
-  Future? _getCurrentLocation() async {
-    final locData = await Location().getLocation();
-    latController.text = locData.latitude.toString();
-    lonController.text = locData.longitude.toString();
+  _getLocation(LocationProvider locationData) async {
+    await locationData.getCurrentPosition().then((value) {});
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            MapSelectionScreen(locationData.latitude!, locationData.longitude!),
+      ),
+    );
+    this.lonController.text = locationData.longitude.toString();
+    this.latController.text = locationData.latitude.toString();
   }
 
   Future _takePicture() async {
@@ -201,9 +212,12 @@ class _AddProductState extends State<AddProduct> {
   String dropdownValueNumberOfFloors = '0';
   String dropdownValueNumberOfKitchen = '0';
   String dropdownValuePriceUnit = '/month';
+  String dropdownValueAddress = "lalitpur";
 
   @override
   Widget build(BuildContext context) {
+    final locationData = Provider.of<LocationProvider>(context, listen: false);
+
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(new FocusNode());
@@ -752,6 +766,9 @@ class _AddProductState extends State<AddProduct> {
                     }).toList(),
                     isExpanded: true,
                   ),
+                  SizedBox(
+                    height: 10,
+                  ),
                   Text(
                     "Facilities:",
                     style: TextStyle(color: Colors.green, fontSize: 20),
@@ -974,33 +991,51 @@ class _AddProductState extends State<AddProduct> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 10),
                       Text(
-                        "Address:",
+                        "Enter Property Address:",
                         style: TextStyle(color: Colors.green, fontSize: 20),
                       ),
-                      TextFormField(
-                        maxLines: 2,
-                        decoration: InputDecoration(
-                          hintText:
-                              "Enter address of your property                                            "
-                              "for eg:(Bagmati-lalitpur-Godawari-1-Mulpani)",
-                          hintStyle: TextStyle(color: Colors.white38),
+                      DropdownButton(
+                        dropdownColor: Colors.grey[850],
+                        value: dropdownValueAddress,
+                        icon: const Icon(
+                          Icons.arrow_downward,
+                          color: Colors.white,
                         ),
-                        style: TextStyle(color: Colors.white),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter suitable address of your property';
-                          }
-                          return null;
+                        iconSize: 24,
+                        elevation: 16,
+                        style: const TextStyle(color: Colors.white),
+                        underline: Container(
+                          height: 2,
+                          color: Colors.deepPurpleAccent,
+                        ),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            dropdownValueAddress = newValue!;
+                          });
+                          address = dropdownValueAddress;
                         },
-                        onSaved: (value) {
-                          address = value!;
-                        },
+                        items: <String>[
+                          "lalitpur",
+                          "kathmandu",
+                          "bhaktapur",
+                          "pokhara",
+                          "lagankhel",
+                          "godawari",
+                          "chapagaun",
+                          "satdobato",
+                          "kalanki",
+                        ].map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        isExpanded: true,
                       ),
                       SizedBox(height: 10),
                       Text(
-                        "Insert Location:",
+                        "Add your current location as property Location:",
                         style: TextStyle(color: Colors.green, fontSize: 20),
                       ),
                       SizedBox(height: 10),
@@ -1029,10 +1064,12 @@ class _AddProductState extends State<AddProduct> {
                             ],
                           ),
                           ElevatedButton.icon(
-                              onPressed: _getCurrentLocation,
+                              onPressed: () {
+                                _getLocation(locationData);
+                              },
                               icon: Icon(Icons.location_on),
                               label: Text(
-                                "Current Location",
+                                "Add Location",
                                 style: TextStyle(color: Colors.white),
                               ))
                         ],

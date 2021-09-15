@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:ghaarjaggaa/Widgets/houses_listview.dart';
 
-
-class HousesList extends StatelessWidget {
+class HousesList extends StatefulWidget {
   static const routeName = ("/housesList");
 
   const HousesList({Key? key}) : super(key: key);
+
+  @override
+  _HousesListState createState() => _HousesListState();
+}
+
+class _HousesListState extends State<HousesList> {
+  String searchText = "";
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +34,9 @@ class HousesList extends StatelessWidget {
                 },
               ),
               title: TextField(
+                onChanged: (value) {
+                  searchText = value;
+                },
                 decoration: InputDecoration(
                     fillColor: Colors.grey[800],
                     border: InputBorder.none,
@@ -43,10 +52,16 @@ class HousesList extends StatelessWidget {
                   Icons.search,
                   color: Colors.blue,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  setState(() {});
+                  FocusScope.of(context).unfocus();
+                },
               ),
             ),
-            Expanded(child: HousesListView()),
+            Expanded(
+                child: HousesListView(
+              searchText: searchText,
+            )),
           ],
         ));
   }

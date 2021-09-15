@@ -4,9 +4,12 @@ import 'package:ghaarjaggaa/Components/drawer.dart';
 import 'package:ghaarjaggaa/PropertiesListing/apartmentslisting.dart';
 import 'package:ghaarjaggaa/PropertiesListing/houseslisting.dart';
 import 'package:ghaarjaggaa/PropertiesListing/landslisting.dart';
+import 'package:ghaarjaggaa/PropertiesListing/nearByPropertiesListing.dart';
 import 'package:ghaarjaggaa/PropertiesListing/roomslisting.dart';
 import 'package:ghaarjaggaa/Providers/dbProvider.dart';
+import 'package:ghaarjaggaa/Providers/location_provider.dart';
 import 'package:ghaarjaggaa/Screens/Dashboard/searchpage.dart';
+import 'package:ghaarjaggaa/Screens/nearByPropertiesListView.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +23,9 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  double? currentUserLatitude;
+  double? currentUserLongitude;
+
   Widget greeting() {
     var hour = DateTime.now().hour;
     if (hour < 12) {
@@ -51,8 +57,24 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
+  _getLocation(LocationProvider locationData, BuildContext context) async {
+    await locationData.getCurrentPosition().then((value) {});
+    currentUserLatitude = await locationData.longitude;
+    currentUserLongitude = await locationData.latitude;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => NearByPropertiesListing(
+          currentUserLatitude: currentUserLatitude!,
+          currentUserLongitude: currentUserLongitude!,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final locationData = Provider.of<LocationProvider>(context);
     Size size = MediaQuery.of(context).size;
     return ChangeNotifierProvider(
       create: (ctx) => DBProvider(),
@@ -68,38 +90,6 @@ class _DashboardState extends State<Dashboard> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SafeArea(
-                  child: TextField(
-                    readOnly: true,
-                    showCursor: true,
-                    autofocus: false,
-                    decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.grey[800],
-                        border: InputBorder.none,
-                        prefixIcon: Icon(
-                          Icons.house,
-                          color: Colors.white,
-                          size: 40.0,
-                        ),
-                        suffixIcon: Icon(
-                          Icons.search,
-                          color: Colors.white,
-                          size: 40.0,
-                        ),
-                        hintText: 'Enter Address, Town or property Id',
-                        hintStyle: TextStyle(
-                          color: Colors.white54,
-                          fontSize: 15,
-                        )),
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return SearchPage();
-                      }));
-                    },
-                  ),
-                ),
                 SizedBox(
                   height: size.height * 0.03,
                 ),
@@ -195,18 +185,24 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ],
                 ),
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'Recommended Properties',
-                    style: TextStyle(
-                        fontSize: 19,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _getLocation(locationData, context);
+                    },
+                    child: Text(
+                      'Find Properties Near You',
+                      style: TextStyle(
+                          fontSize: 19,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
-
               ],
             ),
           )),

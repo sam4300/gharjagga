@@ -53,7 +53,6 @@ class _ApartmentsListState extends State<ApartmentsList> {
                   color: Colors.blue,
                 ),
                 onPressed: () {
-                  print(searchText);
                   setState(() {});
                   FocusScope.of(context).unfocus();
                 },

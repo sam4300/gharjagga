@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:ghaarjaggaa/Widgets/favorite_Listview.dart';
 
-class FavoriteLists extends StatelessWidget {
+class FavoriteLists extends StatefulWidget {
   const FavoriteLists({Key? key}) : super(key: key);
+
+  @override
+  _FavoriteListsState createState() => _FavoriteListsState();
+}
+
+class _FavoriteListsState extends State<FavoriteLists> {
+  String searchText = "";
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +28,9 @@ class FavoriteLists extends StatelessWidget {
                 },
               ),
               title: TextField(
+                onChanged:(value){
+                  searchText =value;
+                },
                 decoration: InputDecoration(
                     fillColor: Colors.grey[800],
                     border: InputBorder.none,
@@ -36,10 +46,13 @@ class FavoriteLists extends StatelessWidget {
                   Icons.search,
                   color: Colors.blue,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  setState(() {});
+                  FocusScope.of(context).unfocus();
+                },
               ),
             ),
-            Expanded(child: FavoriteListView()),
+            Expanded(child: FavoriteListView(searchText: searchText,)),
           ],
         ));
   }

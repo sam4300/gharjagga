@@ -257,6 +257,7 @@ class _PropertyEditingScreenState extends State<PropertyEditingScreen> {
   String dropdownValueNumberOfFloors = '0';
   String dropdownValueNumberOfKitchen = '0';
   String dropdownValuePriceUnit = '/month';
+  String dropdownValueAddress = "LALITPUR";
 
   @override
   Widget build(BuildContext context) {
@@ -1036,33 +1037,51 @@ class _PropertyEditingScreenState extends State<PropertyEditingScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 10),
                       Text(
-                        "Address:",
+                        "Enter Property Address:",
                         style: TextStyle(color: Colors.green, fontSize: 20),
                       ),
-                      TextFormField(
-                        maxLines: 2,
-                        decoration: InputDecoration(
-                          hintText:
-                              "Enter address of your property                                            "
-                              "for eg:(Bagmati-lalitpur-Godawari-1-Mulpani)",
-                          hintStyle: TextStyle(color: Colors.white38),
+                      DropdownButton(
+                        dropdownColor: Colors.grey[850],
+                        value: dropdownValueAddress,
+                        icon: const Icon(
+                          Icons.arrow_downward,
+                          color: Colors.white,
                         ),
-                        style: TextStyle(color: Colors.white),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter suitable address of your property';
-                          }
-                          return null;
+                        iconSize: 24,
+                        elevation: 16,
+                        style: const TextStyle(color: Colors.white),
+                        underline: Container(
+                          height: 2,
+                          color: Colors.deepPurpleAccent,
+                        ),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            dropdownValueAddress = newValue!;
+                          });
+                          address = dropdownValueAddress;
                         },
-                        onSaved: (value) {
-                          address = value!;
-                        },
+                        items: <String>[
+                          "LALITPUR",
+                          "KATHMANDU",
+                          "BHAKTAPUR",
+                          "POKHARA",
+                          "LAGANKHEL",
+                          "GODAWARI",
+                          "CHAPAGAUN",
+                          "SATDOBATO",
+                          "KALANKI",
+                        ].map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        isExpanded: true,
                       ),
                       SizedBox(height: 10),
                       Text(
-                        "Insert Location:",
+                        "Add your current location as property Location:",
                         style: TextStyle(color: Colors.green, fontSize: 20),
                       ),
                       SizedBox(height: 10),
