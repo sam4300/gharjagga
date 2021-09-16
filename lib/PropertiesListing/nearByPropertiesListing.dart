@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ghaarjaggaa/Screens/nearByPropertiesListView.dart';
+import 'package:ghaarjaggaa/Widgets/nearByPropertiesListView.dart';
 import 'package:ghaarjaggaa/Widgets/apartments_listview.dart';
 
 class NearByPropertiesListing extends StatefulWidget {

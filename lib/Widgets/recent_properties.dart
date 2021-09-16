@@ -1,36 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:ghaarjaggaa/PropertyItem/my_property_item.dart';
 import 'package:ghaarjaggaa/PropertyItem/property_item.dart';
 
-class MyPropertyListView extends StatefulWidget {
-  @override
-  _MyPropertyListViewState createState() => _MyPropertyListViewState();
-}
-
-@override
-class _MyPropertyListViewState extends State<MyPropertyListView> {
-  String? get email {
-    final user = FirebaseAuth.instance.currentUser;
-    return user!.email;
-  }
+class RecentPropertiesListView extends StatelessWidget {
+  const RecentPropertiesListView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('properties')
-          .where('userID', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+          .orderBy('createdAt', descending: true)
           .snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) {
           return Center(child: const CircularProgressIndicator());
-        }
-        else if (snapshot.data!.docs.isEmpty) {
+        } else if (snapshot.data!.docs.isEmpty) {
           return Center(
             child: Text(
-              'You have not posted any property',
+              'No Apartments Found',
               style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -39,6 +27,7 @@ class _MyPropertyListViewState extends State<MyPropertyListView> {
           );
         }
         return ListView.builder(
+          scrollDirection: Axis.horizontal,
           itemCount: snapshot.data!.docs.length,
           itemBuilder: (context, index) {
             return ApartmentItem(
@@ -79,14 +68,3 @@ class _MyPropertyListViewState extends State<MyPropertyListView> {
     );
   }
 }
-//
-// ListView(
-// children: snapshot.data!.docs.map((document) {
-// return ApartmentItem(
-// title: document['propertyTitle'],
-// location: document['address'],
-// imageUrl: document['name'],
-// price: document['price'],
-// availability: document['name']);
-// }).toList(),
-// );

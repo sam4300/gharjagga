@@ -8,8 +8,7 @@ import 'package:ghaarjaggaa/PropertiesListing/nearByPropertiesListing.dart';
 import 'package:ghaarjaggaa/PropertiesListing/roomslisting.dart';
 import 'package:ghaarjaggaa/Providers/dbProvider.dart';
 import 'package:ghaarjaggaa/Providers/location_provider.dart';
-import 'package:ghaarjaggaa/Screens/Dashboard/searchpage.dart';
-import 'package:ghaarjaggaa/Screens/nearByPropertiesListView.dart';
+import 'package:ghaarjaggaa/Widgets/recent_properties.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -191,11 +190,14 @@ class _DashboardState extends State<Dashboard> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.grey[850],
+                    ),
                     onPressed: () {
                       _getLocation(locationData, context);
                     },
                     child: Text(
-                      'Find Properties Near You',
+                      'Click to find nearby properties',
                       style: TextStyle(
                           fontSize: 19,
                           color: Colors.white,
@@ -203,6 +205,24 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ),
                 ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "Recent properties:",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 19,
+                      fontWeight: FontWeight.bold),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  height: 250,
+                  width: double.infinity,
+                  child: RecentPropertiesListView(),
+                )
               ],
             ),
           )),

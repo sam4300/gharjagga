@@ -42,7 +42,6 @@ class _MyPropertyDetailScreenState extends State<MyPropertyDetailScreen> {
     final propertyTitle = routeArgs['propertyTitle'];
     final image = routeArgs['image'];
     final price = routeArgs['price'];
-    final availability = routeArgs['availability'];
     final docId = routeArgs['id'].toString();
     final roadAccess = routeArgs['roadAccess'];
     final propertyType = routeArgs['propertyType'];
@@ -231,16 +230,6 @@ class _MyPropertyDetailScreenState extends State<MyPropertyDetailScreen> {
                                         color: Colors.blue,
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {},
-                                    child: Text(
-                                      "Negotiable",
-                                      style: TextStyle(
-                                          color: Colors.green,
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold),
-                                    ),
                                   ),
                                 ],
                               ),

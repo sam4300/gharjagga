@@ -14,7 +14,7 @@ import 'PropertiesListing/landslisting.dart';
 import 'PropertiesListing/myPropertyListing.dart';
 import 'PropertiesListing/roomslisting.dart';
 import 'Providers/rooms_provider.dart';
-import 'Screens/Property_Detail_Screens/apartment_details.dart';
+import 'Screens/Property_Detail_Screens/property_details.dart';
 import 'Screens/Property_Detail_Screens/my_property_detail_screen.dart';
 import 'Screens/TabScreens/my_Profile.dart';
 import 'Screens/auth_screen.dart';

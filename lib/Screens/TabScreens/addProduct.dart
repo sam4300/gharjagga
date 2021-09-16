@@ -1139,6 +1139,8 @@ class _AddProductState extends State<AddProduct> {
                     style: TextStyle(color: Colors.green, fontSize: 20),
                   ),
                   TextFormField(
+                    initialValue: FirebaseAuth.instance.currentUser!.email,
+
                     decoration: InputDecoration(
                       hintText: "Enter your name",
                       hintStyle: TextStyle(color: Colors.white38),
@@ -1160,6 +1162,7 @@ class _AddProductState extends State<AddProduct> {
                     style: TextStyle(color: Colors.green, fontSize: 20),
                   ),
                   TextFormField(
+                    initialValue: FirebaseAuth.instance.currentUser!.email,
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
                       hintText: 'enter your email',

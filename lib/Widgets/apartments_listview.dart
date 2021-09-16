@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:ghaarjaggaa/PropertyItem/apartment_item.dart';
+import 'package:ghaarjaggaa/PropertyItem/property_item.dart';
 
 class ApartmentsListView extends StatefulWidget {
   final String searchText;
@@ -67,6 +67,7 @@ class _ApartmentsListViewState extends State<ApartmentsListView> {
                     uploadedBy: snapshot.data!.docs[index]['userID'],
                     latitude: snapshot.data!.docs[index]['latitude'],
                     longitude: snapshot.data!.docs[index]['longitude'],
+                    listedDate: snapshot.data!.docs[index]['createdAt'],
                   );
                 },
               );
@@ -76,7 +77,7 @@ class _ApartmentsListViewState extends State<ApartmentsListView> {
             stream: FirebaseFirestore.instance
                 .collection('properties')
                 .where('propertyType', isEqualTo: 'Apartment')
-                .where('address',isGreaterThanOrEqualTo: widget.searchText)
+                .where('address', isGreaterThanOrEqualTo: widget.searchText)
                 .snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (!snapshot.hasData) {
@@ -125,6 +126,7 @@ class _ApartmentsListViewState extends State<ApartmentsListView> {
                     uploadedBy: snapshot.data!.docs[index]['userID'],
                     latitude: snapshot.data!.docs[index]['latitude'],
                     longitude: snapshot.data!.docs[index]['longitude'],
+                    listedDate: snapshot.data!.docs[index]['createdAt'],
                   );
                 },
               );

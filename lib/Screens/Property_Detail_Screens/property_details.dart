@@ -6,6 +6,7 @@ import 'package:ghaarjaggaa/Helpers/database.dart';
 import 'package:ghaarjaggaa/Screens/NoMapAvailableScreen.dart';
 import 'package:ghaarjaggaa/Screens/map_screen.dart';
 import 'package:readmore/readmore.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../chat_screen.dart';
 
@@ -23,34 +24,36 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailScreen> {
   var _isFavorite = false;
 
   void _addToFavorite(
-      String imageUrl,
-      String purpose,
-      String propertyType,
-      String propertyTitle,
-      double propertyArea,
-      String areaUnit,
-      String propertyFace,
-      double roadAccess,
-      String roadType,
-      int builtYear,
-      int noOfBedroom,
-      int noOfBathroom,
-      int noOfParking,
-      int noOfFloors,
-      int kitchen,
-      List<String> facilities,
-      double price,
-      String availability,
-      String priceUnit,
-      String address,
-      String description,
-      String name,
-      String email,
-      String docId,
-      int phoneNumber,
-      BuildContext context,
-      double latitude,
-      double longitude) async {
+    String imageUrl,
+    String purpose,
+    String propertyType,
+    String propertyTitle,
+    double propertyArea,
+    String areaUnit,
+    String propertyFace,
+    double roadAccess,
+    String roadType,
+    int builtYear,
+    int noOfBedroom,
+    int noOfBathroom,
+    int noOfParking,
+    int noOfFloors,
+    int kitchen,
+    List<String> facilities,
+    double price,
+    String availability,
+    String priceUnit,
+    String address,
+    String description,
+    String name,
+    String email,
+    String docId,
+    int phoneNumber,
+    BuildContext context,
+    double latitude,
+    double longitude,
+    Timestamp listedDate,
+  ) async {
     setState(() {
       _isFavorite = !_isFavorite;
     });
@@ -82,6 +85,7 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailScreen> {
       'name': name,
       'email': email,
       'phoneNumber': phoneNumber,
+      'createdAt': listedDate,
       'isFavorite': _isFavorite,
       'userID': FirebaseAuth.instance.currentUser!.uid,
       'imageUrl': imageUrl,
@@ -137,7 +141,9 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailScreen> {
                           ),
                           Expanded(
                             child: TextButton(
-                              onPressed: () {},
+                              onPressed: () async {
+                                launch("tel://$phoneNumber");
+                              },
                               child: Icon(Icons.phone),
                               style: TextButton.styleFrom(
                                   primary: Colors.white,
@@ -156,7 +162,9 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailScreen> {
                           child: Column(
                         children: [
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              launch("mailto:$email");
+                            },
                             child: Icon(
                               Icons.mail,
                               color: Colors.green,
@@ -224,9 +232,7 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailScreen> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => ChatScreen(
-                  chatRoomId: chatRoomId
-                )));
+            builder: (context) => ChatScreen(chatRoomId: chatRoomId)));
   }
 
   @override
@@ -261,6 +267,8 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailScreen> {
     final uploadedBy = routeArgs['uploadedBy'];
     final latitude = routeArgs['latitude'];
     final longitude = routeArgs['longitude'];
+    final listedDate = int.parse(routeArgs['listedDate'].toString());
+    final Timestamp uploadedDate = routeArgs['uploadedDate'] as Timestamp;
 
     return Scaffold(
       backgroundColor: Colors.grey[850],
@@ -354,6 +362,7 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailScreen> {
                                     context,
                                     double.parse('$latitude'),
                                     double.parse('$longitude'),
+                                    uploadedDate,
                                   );
                                 },
                                 icon: Icon(
@@ -422,7 +431,13 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailScreen> {
                                     Icons.access_time_outlined,
                                     color: Colors.white,
                                   ),
-                                  Text("$noOfBedroom",
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                      listedDate <= 1
+                                          ? "$listedDate Day ago"
+                                          : "$listedDate Days ago",
                                       style: TextStyle(color: Colors.white)),
                                 ],
                               ),
@@ -453,16 +468,6 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailScreen> {
                                         color: Colors.blue,
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {},
-                                    child: Text(
-                                      "Negotiable",
-                                      style: TextStyle(
-                                          color: Colors.green,
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold),
-                                    ),
                                   ),
                                 ],
                               ),

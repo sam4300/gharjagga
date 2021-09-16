@@ -60,7 +60,7 @@ class _NearByPropertiesState extends State<NearByProperties> {
           children: snapshot.data!.docs.map((DocumentSnapshot document) {
             if (double.parse(
                     getDistance(document['latitude'], document['longitude'])) <=
-                2) {
+                3) {
               return NearByPropertyItem(
                 propertyTitle: document['propertyTitle'],
                 image: document['imageUrl'],
@@ -90,6 +90,7 @@ class _NearByPropertiesState extends State<NearByProperties> {
                 uploadedBy: document['userID'],
                 latitude: document['latitude'],
                 longitude: document['longitude'],
+                listedDate: document['createdAt'],
                 distanceFromUser: double.parse(
                   getDistance(
                     document['latitude'],
@@ -98,11 +99,11 @@ class _NearByPropertiesState extends State<NearByProperties> {
                 ),
               );
             } else {
-              return Center(
-                  child: Container());
+              return Center(child: Container());
             }
           }).toList(),
         );
+
         // return ListView.builder(
         //   itemCount: snapshot.data!.docs.length,
         //   itemBuilder: (context, index) {

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ghaarjaggaa/Screens/Property_Detail_Screens/apartment_details.dart';
+import 'package:ghaarjaggaa/Screens/Property_Detail_Screens/property_details.dart';
 import 'package:ghaarjaggaa/Screens/Property_Detail_Screens/my_property_detail_screen.dart';
 
 class MyPropertyItem extends StatelessWidget {

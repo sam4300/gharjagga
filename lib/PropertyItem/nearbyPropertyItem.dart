@@ -1,6 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ghaarjaggaa/Screens/Property_Detail_Screens/apartment_details.dart';
+import 'package:ghaarjaggaa/Screens/Property_Detail_Screens/property_details.dart';
 import 'package:ghaarjaggaa/Screens/Property_Detail_Screens/my_property_detail_screen.dart';
 
 class NearByPropertyItem extends StatelessWidget {
@@ -33,41 +34,46 @@ class NearByPropertyItem extends StatelessWidget {
   final double latitude;
   final double longitude;
   final double distanceFromUser;
+  final Timestamp listedDate;
 
-  NearByPropertyItem({
-    required this.propertyTitle,
-    required this.image,
-    required this.price,
-    required this.availability,
-    required this.docId,
-    required this.purpose,
-    required this.propertyType,
-    required this.propertyArea,
-    required this.areaUnit,
-    required this.propertyFace,
-    required this.roadType,
-    required this.priceUnit,
-    required this.description,
-    required this.name,
-    required this.email,
-    required this.phoneNumber,
-    required this.roadAccess,
-    required this.builtYear,
-    required this.noOfBedroom,
-    required this.noOfBathroom,
-    required this.noOfParking,
-    required this.noOfFloors,
-    required this.kitchen,
-    required this.facilities,
-    required this.address,
-    required this.uploadedBy,
-    required this.latitude,
-    required this.longitude,
-    required this.distanceFromUser,
-  });
+  NearByPropertyItem(
+      {required this.propertyTitle,
+      required this.image,
+      required this.price,
+      required this.availability,
+      required this.docId,
+      required this.purpose,
+      required this.propertyType,
+      required this.propertyArea,
+      required this.areaUnit,
+      required this.propertyFace,
+      required this.roadType,
+      required this.priceUnit,
+      required this.description,
+      required this.name,
+      required this.email,
+      required this.phoneNumber,
+      required this.roadAccess,
+      required this.builtYear,
+      required this.noOfBedroom,
+      required this.noOfBathroom,
+      required this.noOfParking,
+      required this.noOfFloors,
+      required this.kitchen,
+      required this.facilities,
+      required this.address,
+      required this.uploadedBy,
+      required this.latitude,
+      required this.longitude,
+      required this.distanceFromUser,
+      required this.listedDate});
 
   @override
   Widget build(BuildContext context) {
+    int timeDifference() {
+      return (DateTime.now().difference(listedDate.toDate()).inDays);
+    }
+
     Size size = MediaQuery.of(context).size;
     return SafeArea(
       child: Padding(
@@ -79,7 +85,6 @@ class NearByPropertyItem extends StatelessWidget {
               'propertyTitle': propertyTitle,
               'image': image,
               'price': price,
-              'availability': availability,
               'id': docId,
               'roadAccess': roadAccess,
               'propertyType': propertyType,
@@ -103,7 +108,9 @@ class NearByPropertyItem extends StatelessWidget {
               'roadType': roadType,
               'uploadedBy': uploadedBy,
               'latitude': latitude,
-              'longitude': longitude
+              'longitude': longitude,
+              'listedDate': timeDifference(),
+              'uploadedDate': listedDate,
             });
           },
           child: Row(
@@ -216,18 +223,6 @@ class NearByPropertyItem extends StatelessWidget {
                                         fontWeight: FontWeight.bold)),
                               ],
                             ),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.verified,
-                                  color: Colors.green,
-                                ),
-                                Text(
-                                  "available",
-                                  style: TextStyle(color: Colors.green),
-                                ),
-                              ],
-                            )
                           ],
                         )
                       ],

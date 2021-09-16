@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:ghaarjaggaa/PropertyItem/favorites_item.dart';
+import 'package:ghaarjaggaa/PropertyItem/property_item.dart';
 
 class FavoriteListView extends StatefulWidget {
   final String searchText;
@@ -46,7 +46,7 @@ class _FavoriteListViewState extends State<FavoriteListView> {
               return ListView.builder(
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: (context, index) {
-                  return FavoriteItems(
+                  return ApartmentItem(
                     propertyTitle: snapshot.data!.docs[index]['propertyTitle'],
                     image: snapshot.data!.docs[index]['imageUrl'],
                     price: snapshot.data!.docs[index]['price'],
@@ -56,7 +56,8 @@ class _FavoriteListViewState extends State<FavoriteListView> {
                     propertyType: snapshot.data!.docs[index]['propertyType'],
                     noOfFloors: snapshot.data!.docs[index]['noOfFloors'],
                     kitchen: snapshot.data!.docs[index]['noOfKitchen'],
-                    facilities: [],
+                    facilities:
+                        List.from(snapshot.data!.docs[index]['facilities']),
                     phoneNumber: snapshot.data!.docs[index]['phoneNumber'],
                     name: snapshot.data!.docs[index]['name'],
                     noOfParking: snapshot.data!.docs[index]['noOfParking'],
@@ -72,8 +73,10 @@ class _FavoriteListViewState extends State<FavoriteListView> {
                     noOfBedroom: snapshot.data!.docs[index]['noOfBedrooms'],
                     propertyArea: snapshot.data!.docs[index]['area'],
                     roadType: snapshot.data!.docs[index]['roadType'],
+                    uploadedBy: snapshot.data!.docs[index]['userID'],
                     latitude: snapshot.data!.docs[index]['latitude'],
                     longitude: snapshot.data!.docs[index]['longitude'],
+                    listedDate: snapshot.data!.docs[index]['createdAt'],
                   );
                 },
               );
@@ -81,11 +84,9 @@ class _FavoriteListViewState extends State<FavoriteListView> {
           )
         : StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
-                .collection('favorites')
-                .doc(FirebaseAuth.instance.currentUser!.uid)
-                .collection('myFavorites')
-                .where('isFavorite', isEqualTo: true)
-                .where('address',isGreaterThanOrEqualTo: widget.searchText)
+                .collection('properties')
+                .where('propertyType', isEqualTo: 'Apartment')
+                .where('address', isGreaterThanOrEqualTo: widget.searchText)
                 .snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (!snapshot.hasData) {
@@ -93,7 +94,7 @@ class _FavoriteListViewState extends State<FavoriteListView> {
               } else if (snapshot.data!.docs.isEmpty) {
                 return Center(
                   child: Text(
-                    'No Favorites Yet',
+                    'No Apartments Found',
                     style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -104,7 +105,7 @@ class _FavoriteListViewState extends State<FavoriteListView> {
               return ListView.builder(
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: (context, index) {
-                  return FavoriteItems(
+                  return ApartmentItem(
                     propertyTitle: snapshot.data!.docs[index]['propertyTitle'],
                     image: snapshot.data!.docs[index]['imageUrl'],
                     price: snapshot.data!.docs[index]['price'],
@@ -114,7 +115,8 @@ class _FavoriteListViewState extends State<FavoriteListView> {
                     propertyType: snapshot.data!.docs[index]['propertyType'],
                     noOfFloors: snapshot.data!.docs[index]['noOfFloors'],
                     kitchen: snapshot.data!.docs[index]['noOfKitchen'],
-                    facilities: [],
+                    facilities:
+                        List.from(snapshot.data!.docs[index]['facilities']),
                     phoneNumber: snapshot.data!.docs[index]['phoneNumber'],
                     name: snapshot.data!.docs[index]['name'],
                     noOfParking: snapshot.data!.docs[index]['noOfParking'],
@@ -130,8 +132,10 @@ class _FavoriteListViewState extends State<FavoriteListView> {
                     noOfBedroom: snapshot.data!.docs[index]['noOfBedrooms'],
                     propertyArea: snapshot.data!.docs[index]['area'],
                     roadType: snapshot.data!.docs[index]['roadType'],
+                    uploadedBy: snapshot.data!.docs[index]['userID'],
                     latitude: snapshot.data!.docs[index]['latitude'],
                     longitude: snapshot.data!.docs[index]['longitude'],
+                    listedDate: snapshot.data!.docs[index]['createdAt'],
                   );
                 },
               );

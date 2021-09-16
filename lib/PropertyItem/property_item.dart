@@ -1,6 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ghaarjaggaa/Screens/Property_Detail_Screens/apartment_details.dart';
+import 'package:ghaarjaggaa/Screens/Property_Detail_Screens/property_details.dart';
 import 'package:ghaarjaggaa/Screens/Property_Detail_Screens/my_property_detail_screen.dart';
 
 class ApartmentItem extends StatelessWidget {
@@ -32,40 +33,45 @@ class ApartmentItem extends StatelessWidget {
   final String uploadedBy;
   final double latitude;
   final double longitude;
+  final Timestamp listedDate;
 
-  ApartmentItem({
-    required this.propertyTitle,
-    required this.image,
-    required this.price,
-    required this.availability,
-    required this.docId,
-    required this.purpose,
-    required this.propertyType,
-    required this.propertyArea,
-    required this.areaUnit,
-    required this.propertyFace,
-    required this.roadType,
-    required this.priceUnit,
-    required this.description,
-    required this.name,
-    required this.email,
-    required this.phoneNumber,
-    required this.roadAccess,
-    required this.builtYear,
-    required this.noOfBedroom,
-    required this.noOfBathroom,
-    required this.noOfParking,
-    required this.noOfFloors,
-    required this.kitchen,
-    required this.facilities,
-    required this.address,
-    required this.uploadedBy,
-    required this.latitude,
-    required this.longitude,
-  });
+  ApartmentItem(
+      {required this.propertyTitle,
+      required this.image,
+      required this.price,
+      required this.availability,
+      required this.docId,
+      required this.purpose,
+      required this.propertyType,
+      required this.propertyArea,
+      required this.areaUnit,
+      required this.propertyFace,
+      required this.roadType,
+      required this.priceUnit,
+      required this.description,
+      required this.name,
+      required this.email,
+      required this.phoneNumber,
+      required this.roadAccess,
+      required this.builtYear,
+      required this.noOfBedroom,
+      required this.noOfBathroom,
+      required this.noOfParking,
+      required this.noOfFloors,
+      required this.kitchen,
+      required this.facilities,
+      required this.address,
+      required this.uploadedBy,
+      required this.latitude,
+      required this.longitude,
+      required this.listedDate});
 
   @override
   Widget build(BuildContext context) {
+    int timeDifference() {
+      return (DateTime.now().difference(listedDate.toDate()).inDays);
+    }
+
     Size size = MediaQuery.of(context).size;
     return SafeArea(
       child: Padding(
@@ -101,7 +107,9 @@ class ApartmentItem extends StatelessWidget {
               'roadType': roadType,
               'uploadedBy': uploadedBy,
               'latitude': latitude,
-              'longitude': longitude
+              'longitude': longitude,
+              'listedDate': timeDifference(),
+              'uploadedDate': listedDate,
             });
           },
           child: Row(
@@ -200,28 +208,29 @@ class ApartmentItem extends StatelessWidget {
                           height: 5,
                         ),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Icon(
                               Icons.access_time_outlined,
                               color: Colors.white70,
                             ),
-                            Text("Time",
-                                style: TextStyle(
-                                    color: Colors.white70,
-                                    fontWeight: FontWeight.bold)),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.verified,
-                                  color: Colors.green,
-                                ),
-                                Text(
-                                  "available",
-                                  style: TextStyle(color: Colors.green),
-                                ),
-                              ],
-                            )
+                            SizedBox(
+                              width: 5,
+                            ),
+                            if (timeDifference() == 0)
+                              Text(
+                                "Today",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            if (timeDifference() == 1)
+                              Text(
+                                "$timeDifference() Day ago",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            if (timeDifference() > 1)
+                              Text(
+                                "$timeDifference() Days ago",
+                                style: TextStyle(color: Colors.white),
+                              )
                           ],
                         )
                       ],

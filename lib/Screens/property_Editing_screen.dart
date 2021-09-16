@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ghaarjaggaa/Helpers/database.dart';
 import 'package:ghaarjaggaa/Helpers/location_helper.dart';
 import 'package:ghaarjaggaa/Screens/Dashboard/tabscreen.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -31,19 +32,19 @@ class PropertyEditingScreen extends StatefulWidget {
   final int noOfFloors1;
   final double propertyArea1;
 
-  PropertyEditingScreen(
-      {required this.propertyTitle1,
-      required this.noOfBedrooms,
-      required this.docId,
-      required this.roadAccess1,
-      required this.builtYear1,
-      required this.description1,
-      required this.price1,
-      required this.propertyFace1,
-      required this.propertyType1,
-      required this.purpose1,
-      required this.noOfFloors1,
-      required this.propertyArea1});
+  PropertyEditingScreen({required this.propertyTitle1,
+    required this.noOfBedrooms,
+    required this.docId,
+    required this.roadAccess1,
+    required this.builtYear1,
+    required this.description1,
+    required this.price1,
+    required this.propertyFace1,
+    required this.propertyType1,
+    required this.purpose1,
+    required this.noOfFloors1,
+    required this.propertyArea1});
+
 
   @override
   _PropertyEditingScreenState createState() => _PropertyEditingScreenState();
@@ -78,6 +79,24 @@ class _PropertyEditingScreenState extends State<PropertyEditingScreen> {
   var email = "";
   var phoneNumber = 0;
 
+  DatabaseMethods databaseMethods = new DatabaseMethods();
+  TextEditingController _nameController = TextEditingController();
+
+
+  void _loadCurrentUSerData() async {
+    await databaseMethods.fetchCurrentUserData();
+    setState(() {
+      _nameController.text = databaseMethods.name;
+    });
+  }
+
+  @override
+  void initState() {
+    _loadCurrentUSerData();
+
+    super.initState();
+  }
+
   final facilitiesList = [
     CheckBoxState(title: "Internet"),
     CheckBoxState(title: "Swimming Pool"),
@@ -94,7 +113,8 @@ class _PropertyEditingScreenState extends State<PropertyEditingScreen> {
     CheckBoxState(title: "Earthquake resistant"),
   ];
 
-  Widget builderCheckBox(CheckBoxState checkBox) => ListTile(
+  Widget builderCheckBox(CheckBoxState checkBox) =>
+      ListTile(
         leading: Checkbox(
           activeColor: Colors.green,
           value: checkBox.value,
@@ -123,7 +143,10 @@ class _PropertyEditingScreenState extends State<PropertyEditingScreen> {
     final ref = FirebaseStorage.instance
         .ref()
         .child('userImages')
-        .child(FirebaseFirestore.instance.collection('properties').doc().id);
+        .child(FirebaseFirestore.instance
+        .collection('properties')
+        .doc()
+        .id);
     await ref.putFile(image!);
     final imageUrl = await ref.getDownloadURL();
 
@@ -191,9 +214,9 @@ class _PropertyEditingScreenState extends State<PropertyEditingScreen> {
       'userID': FirebaseAuth.instance.currentUser!.uid,
       'imageUrl': imageUrl,
       'latitude':
-          latController.text == "" ? 1.1 : double.parse(latController.text),
+      latController.text == "" ? 1.1 : double.parse(latController.text),
       'longitude':
-          lonController.text == "" ? 1.1 : double.parse(lonController.text),
+      lonController.text == "" ? 1.1 : double.parse(lonController.text),
     });
   }
 
@@ -208,17 +231,19 @@ class _PropertyEditingScreenState extends State<PropertyEditingScreen> {
       });
       showDialog<String>(
         context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: Text('Property Successfully Updated'),
-          actions: [
-            TextButton(
-              child: const Text('Ok'),
-              onPressed: () {
-                Navigator.of(context).pushReplacementNamed(TabScreen.routeName);
-              },
+        builder: (BuildContext context) =>
+            AlertDialog(
+              title: Text('Property Successfully Updated'),
+              actions: [
+                TextButton(
+                  child: const Text('Ok'),
+                  onPressed: () {
+                    Navigator.of(context).pushReplacementNamed(
+                        TabScreen.routeName);
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
       );
     }
   }
@@ -239,7 +264,7 @@ class _PropertyEditingScreenState extends State<PropertyEditingScreen> {
 
   Future _selectPicture() async {
     final imageFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    await ImagePicker().pickImage(source: ImageSource.gallery);
     setState(() {
       image = File(imageFile!.path);
     });
@@ -616,7 +641,7 @@ class _PropertyEditingScreenState extends State<PropertyEditingScreen> {
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         hintText:
-                            "Enter the built year of your property in B.S",
+                        "Enter the built year of your property in B.S",
                         hintStyle: TextStyle(color: Colors.white38),
                       ),
                       style: TextStyle(color: Colors.white),
@@ -850,7 +875,7 @@ class _PropertyEditingScreenState extends State<PropertyEditingScreen> {
                               autofocus: false,
                               decoration: InputDecoration(
                                 hintText:
-                                    "Enter price and price unit of the property",
+                                "Enter price and price unit of the property",
                                 hintStyle: TextStyle(
                                     color: Colors.white70, fontSize: 13),
                                 focusedBorder: OutlineInputBorder(
@@ -944,7 +969,7 @@ class _PropertyEditingScreenState extends State<PropertyEditingScreen> {
                                     width: 200.0,
                                     child: Column(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                      MainAxisAlignment.center,
                                       children: <Widget>[
                                         Padding(
                                           padding: EdgeInsets.all(10.0),
@@ -962,7 +987,7 @@ class _PropertyEditingScreenState extends State<PropertyEditingScreen> {
                                         ),
                                         Padding(
                                             padding:
-                                                EdgeInsets.only(top: 10.0)),
+                                            EdgeInsets.only(top: 10.0)),
                                         ElevatedButton(
                                             onPressed: () {
                                               Navigator.of(context).pop();
@@ -987,36 +1012,36 @@ class _PropertyEditingScreenState extends State<PropertyEditingScreen> {
                   ),
                   image != null
                       ? Stack(
-                          children: [
-                            Container(
-                                height: 300,
-                                width: double.infinity,
-                                child: Image.file(
-                                  image!,
-                                  fit: BoxFit.cover,
-                                )),
-                            Positioned(
-                                right: 0,
-                                top: 0,
-                                child: IconButton(
-                                  icon: Icon(Icons.remove, size: 50),
-                                  color: Colors.red,
-                                  onPressed: () {
-                                    setState(() {
-                                      image = null;
-                                    });
-                                  },
-                                ))
-                          ],
-                        )
-                      : Container(
-                          height: 50,
+                    children: [
+                      Container(
+                          height: 300,
                           width: double.infinity,
-                          child: Text(
-                            "Please select at least one image",
-                            style: TextStyle(color: Colors.white, fontSize: 20),
-                          ),
-                        ),
+                          child: Image.file(
+                            image!,
+                            fit: BoxFit.cover,
+                          )),
+                      Positioned(
+                          right: 0,
+                          top: 0,
+                          child: IconButton(
+                            icon: Icon(Icons.remove, size: 50),
+                            color: Colors.red,
+                            onPressed: () {
+                              setState(() {
+                                image = null;
+                              });
+                            },
+                          ))
+                    ],
+                  )
+                      : Container(
+                    height: 50,
+                    width: double.infinity,
+                    child: Text(
+                      "Please select at least one image",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                  ),
                   SizedBox(height: 20),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1102,11 +1127,11 @@ class _PropertyEditingScreenState extends State<PropertyEditingScreen> {
                                       color: Colors.white, fontSize: 30)),
                               Expanded(
                                   child: TextField(
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: Colors.white),
-                                readOnly: true,
-                                controller: lonController,
-                              ))
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(color: Colors.white),
+                                    readOnly: true,
+                                    controller: lonController,
+                                  ))
                             ],
                           ),
                           ElevatedButton.icon(
@@ -1140,7 +1165,7 @@ class _PropertyEditingScreenState extends State<PropertyEditingScreen> {
                   TextFormField(
                     decoration: InputDecoration(
                         hintText:
-                            "Enter the detailed description of your property",
+                        "Enter the detailed description of your property",
                         hintStyle: TextStyle(color: Colors.white38),
                         counterStyle: TextStyle(color: Colors.white)),
                     onChanged: (value) {},
@@ -1183,11 +1208,11 @@ class _PropertyEditingScreenState extends State<PropertyEditingScreen> {
                     style: TextStyle(color: Colors.green, fontSize: 20),
                   ),
                   TextFormField(
-                    initialValue: "samar",
+                    controller:_nameController,
                     decoration: InputDecoration(
-                      hintText: "Enter your name",
-                      hintStyle: TextStyle(color: Colors.white38),
-                    ),
+                    hintText: "Enter your name",
+                    hintStyle: TextStyle(color: Colors.white38),
+                  ),
                     style: TextStyle(color: Colors.white),
                     validator: (value) {
                       if (value!.isEmpty || value.length < 3) {
@@ -1227,7 +1252,6 @@ class _PropertyEditingScreenState extends State<PropertyEditingScreen> {
                     style: TextStyle(color: Colors.green, fontSize: 20),
                   ),
                   TextFormField(
-                    initialValue: "hello",
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       hintText: "Enter your phone number",
